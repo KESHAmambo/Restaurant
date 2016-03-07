@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Аркадий on 05.02.2016.
+ * Created by РђСЂРєР°РґРёР№ on 05.02.2016.
  */
 public class TestOrder extends Order {
     public TestOrder(Tablet tablet) throws IOException {
