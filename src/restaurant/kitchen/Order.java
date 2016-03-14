@@ -13,6 +13,7 @@ import java.util.List;
 public class Order {
     private Connection waiter;
     private int tableNumber;
+    private String cook;
 
     public int getTableNumber() {
         return tableNumber;
@@ -24,6 +25,14 @@ public class Order {
 
     public void setWaiter(Connection waiter) {
         this.waiter = waiter;
+    }
+
+    public String getCook() {
+        return cook;
+    }
+
+    public void setCook(String cook) {
+        this.cook = cook;
     }
 
     //    ----------------------------------------------

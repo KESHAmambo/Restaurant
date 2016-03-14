@@ -12,10 +12,8 @@ import java.util.concurrent.BlockingQueue;
  */
 public class HandlerFactory {
     private static BlockingQueue<Connection> waiters = Server.getWaiters();
-    private static List<String> actorsNames = Server.getActorsNames();
 
-    private HandlerFactory() {
-    }
+    private HandlerFactory() {}
 
     public static Handler newHandler(Message message, Connection connection) {
         switch(message.getMessageType()) {
@@ -31,12 +29,4 @@ public class HandlerFactory {
         }
     }
 
-    private static boolean checkNameAndAdd(String actorName) {
-        if(actorName != null && !actorsNames.contains(actorName)) {
-            actorsNames.add(actorName);
-            return true;
-        } else {
-            return false;
-        }
-    }
 }

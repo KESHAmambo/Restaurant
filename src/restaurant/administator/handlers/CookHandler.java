@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
 public class CookHandler extends Handler {
     private final BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
 
-    private boolean isCookingOrder = false;
+    private boolean cookingOrder = false;
 
     public CookHandler(Connection connection) {
         super(connection);
@@ -23,11 +23,11 @@ public class CookHandler extends Handler {
 
     @Override
     public void run() {
-        isCookingOrder = false;
+        cookingOrder = false;
         try {
             requestActorName();
             while(true) {
-                if(!isCookingOrder) {
+                if(!cookingOrder) {
                     waitForOrder();
                 } else {
                     waitForCooking();
@@ -48,8 +48,9 @@ public class CookHandler extends Handler {
         if(message.getMessageType() == MessageType.ORDER_IS_READY) {
             Order order = message.getOrder();
             if(order != null) {
+                order.setCook(actorName);
                 order.getWaiter().send(message);
-                isCookingOrder = false;
+                cookingOrder = false;
                 Server.addOrderToCooksStatisticsBase(order, actorName);
             }
         }
@@ -60,7 +61,7 @@ public class CookHandler extends Handler {
         Message message = new Message(MessageType.ORDER, order);
         try {
             connection.send(message);
-            isCookingOrder = true;
+            cookingOrder = true;
         } catch (IOException e) {
             if(order != null) {
                 waitingOrders.put(order);
