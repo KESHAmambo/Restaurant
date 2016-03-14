@@ -37,12 +37,7 @@ public class Server {
                     Message handshakeMessage = connection.receive();
                     Handler handler = HandlerFactory.newHandler(handshakeMessage, connection);
                     if(handler != null) {
-                        Message acceptedMessage = new Message(MessageType.NAME_ACCEPTED);
-                        connection.send(acceptedMessage);
                         executor.execute(handler);
-                    } else {
-                        Message rejectedMessage = new Message(MessageType.NAME_REJECTED);
-                        connection.send(rejectedMessage);
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();

@@ -22,13 +22,14 @@ public class ClientHandler extends Handler {
     private String currentName;
     private boolean hasCurrentClient = false;
 
-    public ClientHandler(Connection connection, String clientName) {
-        super(connection, clientName);
+    public ClientHandler(Connection connection) {
+        super(connection);
     }
 
     @Override
     public void run() {
         try {
+            requestActorName();
             while (true) {
                 if (!hasCurrentClient) {
                     waitForNewClient();

@@ -18,20 +18,17 @@ public class HandlerFactory {
     }
 
     public static Handler newHandler(Message message, Connection connection) {
-        String actorName = message.getText();
-        boolean isAdded = checkNameAndAdd(actorName);
-        if(isAdded) {
-            switch (message.getMessageType()) {
-                case COOK_CONNECTION:
-                    return new CookHandler(connection, actorName);
-                case WAITER_CONNECTION:
-                    waiters.add(connection);
-                    return new WaiterHandler(connection, actorName);
-                case CLIENT_CONNECTION:
-                    return new ClientHandler(connection, actorName);
-            }
+        switch(message.getMessageType()) {
+            case COOK_CONNECTION:
+                return new CookHandler(connection);
+            case WAITER_CONNECTION:
+                waiters.add(connection);
+                return new WaiterHandler(connection);
+            case CLIENT_CONNECTION:
+                return new ClientHandler(connection);
+            default:
+                return null;
         }
-        return null;
     }
 
     private static boolean checkNameAndAdd(String actorName) {

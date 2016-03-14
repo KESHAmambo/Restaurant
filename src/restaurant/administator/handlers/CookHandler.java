@@ -17,14 +17,15 @@ public class CookHandler extends Handler {
 
     private boolean isCookingOrder = false;
 
-    public CookHandler(Connection connection, String cookName) {
-        super(connection, cookName);
+    public CookHandler(Connection connection) {
+        super(connection);
     }
 
     @Override
     public void run() {
         isCookingOrder = false;
         try {
+            requestActorName();
             while(true) {
                 if(!isCookingOrder) {
                     waitForOrder();

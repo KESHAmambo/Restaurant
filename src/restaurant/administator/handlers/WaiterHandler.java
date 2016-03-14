@@ -14,23 +14,15 @@ import java.util.Map;
 public class WaiterHandler extends Handler {
     Map<String, Connection> clientsNameToConnectionLinks = Server.getClientsNameToConnectionLinks();
 
-    public WaiterHandler(Connection connection, String waiterName) {
-        super(connection, waiterName);
+    public WaiterHandler(Connection connection) {
+        super(connection);
     }
 
     @Override
     public void run() {
         try {
-            while(true) {
-                Message message = connection.receive();
-                String clientName = message.getClientName();
-                if(message.getMessageType() == MessageType.TEXT && clientName != null) {
-                    Connection clientConnection = clientsNameToConnectionLinks.get(clientName);
-                    if (clientConnection != null) {
-                        clientConnection.send(message);
-                    }
-                }
-            }
+            requestActorName();
+            resendTextsToClients();
         } catch (IOException | ClassNotFoundException ignore) {
         } finally {
             Server.showWarningMessage("Waiter " + actorName + " was disconnected!");
@@ -38,6 +30,19 @@ public class WaiterHandler extends Handler {
             try {
                 connection.close();
             } catch (IOException ignore) {}
+        }
+    }
+
+    private void resendTextsToClients() throws IOException, ClassNotFoundException {
+        while(true) {
+            Message message = connection.receive();
+            String clientName = message.getClientName();
+            if(message.getMessageType() == MessageType.TEXT && clientName != null) {
+                Connection clientConnection = clientsNameToConnectionLinks.get(clientName);
+                if (clientConnection != null) {
+                    clientConnection.send(message);
+                }
+            }
         }
     }
 }
