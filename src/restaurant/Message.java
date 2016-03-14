@@ -36,6 +36,14 @@ public class Message {
         text = null;
     }
 
+    public Message(MessageType messageType, String clientName, int tableNumber) {
+        this.messageType = messageType;
+        this.clientName = clientName;
+        this.tableNumber = tableNumber;
+        order = null;
+        text = null;
+    }
+
     public Message(MessageType messageType, String clientName, String text) {
         this.messageType = messageType;
         this.clientName = clientName;

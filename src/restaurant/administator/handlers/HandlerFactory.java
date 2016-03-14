@@ -12,26 +12,34 @@ import java.util.concurrent.BlockingQueue;
  */
 public class HandlerFactory {
     private static BlockingQueue<Connection> waiters = Server.getWaiters();
-    private static List<String> actorNames = Server.getActorNames();
+    private static List<String> actorsNames = Server.getActorsNames();
 
     private HandlerFactory() {
     }
 
     public static Handler newHandler(Message message, Connection connection) {
         String actorName = message.getText();
-        switch(message.getMessageType()) {
-            case COOK_CONNECTION:
-                actorNames.add(actorName);
-                return new CookHandler(connection, actorName);
-            case WAITER_CONNECTION:
-                actorNames.add(actorName);
-                waiters.add(connection);
-                return new WaiterHandler(connection, actorName);
-            case CLIENT_CONNECTION:
-                actorNames.add(actorName);
-                return new ClientHandler(connection, actorName);
-            default:
-                return null;
+        boolean isAdded = checkNameAndAdd(actorName);
+        if(isAdded) {
+            switch (message.getMessageType()) {
+                case COOK_CONNECTION:
+                    return new CookHandler(connection, actorName);
+                case WAITER_CONNECTION:
+                    waiters.add(connection);
+                    return new WaiterHandler(connection, actorName);
+                case CLIENT_CONNECTION:
+                    return new ClientHandler(connection, actorName);
+            }
+        }
+        return null;
+    }
+
+    private static boolean checkNameAndAdd(String actorName) {
+        if(actorName != null && !actorsNames.contains(actorName)) {
+            actorsNames.add(actorName);
+            return true;
+        } else {
+            return false;
         }
     }
 }

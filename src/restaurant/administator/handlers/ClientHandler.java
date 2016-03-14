@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by Аркадий on 13.03.2016.
  */
 public class ClientHandler extends Handler {
-    Map<String, Connection> clientNameToConnectionLinks = Server.getClientNameToConnectionLinks();
+    Map<String, Connection> clientsNameToConnectionLinks = Server.getClientsNameToConnectionLinks();
     BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
     private BlockingQueue<Connection> waiters = Server.getWaiters();
 
@@ -39,7 +39,7 @@ public class ClientHandler extends Handler {
         } catch (IOException | InterruptedException | ClassNotFoundException ignore) {
         } finally {
             Server.showWarningMessage("Client " + actorName + " was disconnected!");
-            Server.getActorNames().remove(actorName);
+            Server.getActorsNames().remove(actorName);
             try {
                 connection.close();
             } catch (IOException ignore) {}
@@ -52,8 +52,9 @@ public class ClientHandler extends Handler {
             case ORDER:
                 Order order = message.getOrder();
                 if (order != null) {
+                    order.setWaiter(waiter);
                     waitingOrders.put(order);
-                    Server.addOrderToClientStatisticsBase(order, actorName);
+                    Server.addOrderToClientsStatisticsBase(order, actorName);
                 }
                 break;
             case TEXT:
@@ -61,7 +62,7 @@ public class ClientHandler extends Handler {
                 break;
             case END_MEAL:
                 hasCurrentClient = false;
-                clientNameToConnectionLinks.remove(currentName);
+                clientsNameToConnectionLinks.remove(currentName);
                 waiter.send(message);
                 break;
         }
@@ -75,7 +76,7 @@ public class ClientHandler extends Handler {
             waiter = waiters.take();
             waiters.put(waiter);
             waiter.send(newClientMessage);
-            clientNameToConnectionLinks.put(currentName, connection);
+            clientsNameToConnectionLinks.put(currentName, connection);
         }
     }
 }

@@ -2,6 +2,7 @@ package restaurant.kitchen;
 
 import restaurant.ConsoleHelper;
 import restaurant.Tablet;
+import restaurant.administator.Connection;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +11,22 @@ import java.util.List;
  * Created by Аркадий on 31.01.2016.
  */
 public class Order {
+    private Connection waiter;
+    private int tableNumber;
+
+    public int getTableNumber() {
+        return tableNumber;
+    }
+
+    public Connection getWaiter() {
+        return waiter;
+    }
+
+    public void setWaiter(Connection waiter) {
+        this.waiter = waiter;
+    }
+
+    //    ----------------------------------------------
     private Tablet tablet;
     protected List<Dish> dishes;
 

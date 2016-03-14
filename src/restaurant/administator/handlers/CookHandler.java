@@ -14,7 +14,6 @@ import java.util.concurrent.BlockingQueue;
  */
 public class CookHandler extends Handler {
     private final BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
-    private final BlockingQueue<Order> readyOrders = Server.getReadyOrders();
 
     private boolean isCookingOrder = false;
 
@@ -36,7 +35,7 @@ public class CookHandler extends Handler {
         } catch (IOException | InterruptedException | ClassNotFoundException ignore) {
         } finally {
             Server.showWarningMessage("Cook " + actorName + " was disconnected!");
-            Server.getActorNames().remove(actorName);
+            Server.getActorsNames().remove(actorName);
             try {
                 connection.close();
             } catch (IOException ignore) {}
@@ -48,9 +47,9 @@ public class CookHandler extends Handler {
         if(message.getMessageType() == MessageType.ORDER_IS_READY) {
             Order order = message.getOrder();
             if(order != null) {
-                readyOrders.put(order);
+                order.getWaiter().send(message);
                 isCookingOrder = false;
-                Server.addOrderToCooksStatisticBase(order, actorName);
+                Server.addOrderToCooksStatisticsBase(order, actorName);
             }
         }
     }
