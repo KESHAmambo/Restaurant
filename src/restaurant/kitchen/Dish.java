@@ -1,31 +1,88 @@
 package restaurant.kitchen;
 
-import java.util.Arrays;
-
 /**
- * Created by Аркадий on 31.01.2016.
+ * Created by Eduard 16.03.2016
  */
-public enum Dish {
-    Fish(25),
-    Steak(30),
-    Soup(15),
-    Juice(5),
-    Water(3);
+public class Dish {
+    private String type;
+    private String name;
+    private String fullDescription;
+    private String shortDescription;
+    private String imagePath;
+    private double price = 0;
 
-    private int duration;
+    //Constructors
 
-     Dish(int duration) {
-         this.duration = duration;
+    public Dish(String type, String name, String fullDescription, String shortDescription,
+                String imagePath, double price) {
+        this.type = type;
+        this.name = name;
+        this.fullDescription = fullDescription;
+        this.shortDescription = shortDescription;
+        this.imagePath = imagePath;
+        this.price = price;
     }
 
-    public static String allDishesToString() {
-        if (values().length == 0) {
-            return "";
-        }
-        return Arrays.toString(values()).substring(1, Arrays.toString(values()).length() - 1);
+    //Setters
+
+    public void setAll(String type, String name, String fullDescription, String shortDescription,
+                       String imagePath, double price) {
+        this.type = type;
+        this.name = name;
+        this.fullDescription = fullDescription;
+        this.shortDescription = shortDescription;
+        this.imagePath = imagePath;
+        this.price = price;
     }
 
-    public int getDuration() {
-        return duration;
+    public void setType(String type) {
+        this.type = type;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setFullDescription(String fullDescription) {
+        this.fullDescription = fullDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    //Getters
+
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFullDescription() {
+        return fullDescription;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
 }
