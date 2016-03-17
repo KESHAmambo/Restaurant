@@ -22,6 +22,7 @@ public abstract class Actor {
             clientHandshake();
             clientMainLoop();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             notifyConnectionStatusChanged(false);
         }
     }
@@ -49,12 +50,14 @@ public abstract class Actor {
 
     protected abstract void clientMainLoop() throws IOException, ClassNotFoundException;
 
+    public abstract void sendMessage(Message message);
+
     protected abstract int askServerPort();
 
     protected abstract String askServerAddress();
 
     protected abstract String askName();
 
-    protected abstract void notifyConnectionStatusChanged(boolean connectionStatus);
+    protected abstract void notifyConnectionStatusChanged(boolean actorConnected);
 
 }

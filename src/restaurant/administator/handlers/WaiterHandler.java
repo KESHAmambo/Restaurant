@@ -23,7 +23,9 @@ public class WaiterHandler extends Handler {
         try {
             requestActorName();
             resendTextsToClients();
-        } catch (IOException | ClassNotFoundException ignore) {
+        } catch (IOException ignore) {
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             Server.showWarningMessage("Waiter " + actorName + " was disconnected!");
             Server.getActorsNames().remove(actorName);

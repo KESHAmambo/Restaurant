@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="restaurant.cook.view.CookView">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="800" height="549"/>
+    </constraints>
+    <properties>
+      <alignmentX value="0.5"/>
+      <background color="-4921197"/>
+      <maximumSize width="900" height="700"/>
+      <opaque value="true"/>
+      <preferredSize width="900" height="600"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="332fd" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties>
+          <opaque value="false"/>
+          <preferredSize width="900" height="54"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="b56f3" class="javax.swing.JLabel">
+            <constraints border-constraint="West"/>
+            <properties>
+              <font name="AR CENA" size="28"/>
+              <opaque value="false"/>
+              <preferredSize width="250" height="50"/>
+              <text value="       Current currentOrder:"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="d2ec9" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="South"/>
+        <properties>
+          <opaque value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <scrollpane id="f6496">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <focusCycleRoot value="false"/>
+              <preferredSize width="800" height="170"/>
+              <requestFocusEnabled value="true"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="d681e" class="javax.swing.JTextArea" binding="previousOrdersTextArea">
+                <constraints/>
+                <properties>
+                  <background color="-720943"/>
+                  <font size="16"/>
+                  <foreground color="-11185067"/>
+                  <margin top="0" left="20" bottom="0" right="20"/>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <grid id="fc55e" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="North"/>
+            <properties>
+              <opaque value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="1a181" class="javax.swing.JLabel">
+                <constraints border-constraint="West"/>
+                <properties>
+                  <font name="AR CENA" size="26"/>
+                  <opaque value="false"/>
+                  <preferredSize width="250" height="50"/>
+                  <text value="        Previous orders:"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="27815" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <scrollpane id="33e43">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <minimumSize width="800" height="250"/>
+              <preferredSize width="800" height="250"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="fb214" class="javax.swing.JTextArea" binding="currentOrderTextArea">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                  <font size="16" style="1"/>
+                  <foreground color="-10461088"/>
+                  <lineWrap value="false"/>
+                  <margin top="0" left="20" bottom="0" right="20"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <component id="45c6f" class="javax.swing.JButton" binding="orderIsReadyButton">
+            <constraints border-constraint="South"/>
+            <properties>
+              <enabled value="false"/>
+              <font name="AR CENA" size="33" style="1"/>
+              <foreground color="-12178371"/>
+              <preferredSize width="66" height="60"/>
+              <text value="ORDER IS READY"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

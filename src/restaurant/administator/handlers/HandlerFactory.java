@@ -15,7 +15,7 @@ public class HandlerFactory {
 
     private HandlerFactory() {}
 
-    public static Handler newHandler(Message message, Connection connection) {
+    public static Handler byMessage(Message message, Connection connection) {
         switch(message.getMessageType()) {
             case COOK_CONNECTION:
                 return new CookHandler(connection);

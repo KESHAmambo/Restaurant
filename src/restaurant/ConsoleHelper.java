@@ -26,16 +26,10 @@ public class ConsoleHelper {
     {
         List<Dish> l = new ArrayList<>();
         String str;
-        writeMessage(Dish.allDishesToString());
+        writeMessage(null);
         str = readString();
         while (!"exit".equals(str))
         {
-            try {
-                l.add(Dish.valueOf(str));
-            }
-            catch (IllegalArgumentException e) {
-                ConsoleHelper.writeMessage(str + " is not detected");
-            }
             str = readString();
         }
         return l;

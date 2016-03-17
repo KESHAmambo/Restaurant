@@ -37,7 +37,9 @@ public class ClientHandler extends Handler {
                     workWithCurrentClient();
                 }
             }
-        } catch (IOException | InterruptedException | ClassNotFoundException ignore) {
+        } catch (IOException ignore) {
+        } catch (InterruptedException | ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             Server.showWarningMessage("Client " + actorName + " was disconnected!");
             Server.getActorsNames().remove(actorName);

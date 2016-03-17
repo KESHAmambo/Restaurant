@@ -8,6 +8,7 @@ import restaurant.kitchen.Order;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Аркадий on 13.03.2016.
@@ -33,7 +34,9 @@ public class CookHandler extends Handler {
                     waitForCooking();
                 }
             }
-        } catch (IOException | InterruptedException | ClassNotFoundException ignore) {
+        } catch (IOException ignore) {
+        } catch (InterruptedException | ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             Server.showWarningMessage("Cook " + actorName + " was disconnected!");
             Server.getActorsNames().remove(actorName);
@@ -57,15 +60,22 @@ public class CookHandler extends Handler {
     }
 
     private void waitForOrder() throws InterruptedException, IOException {
-        Order order = waitingOrders.take();
+        Order order;
+        while(true) {
+            order = waitingOrders.poll(3, TimeUnit.SECONDS);
+            if(order != null) {
+                break;
+            } else {
+                connection.send(new Message(MessageType.PING));
+            }
+        }
+
         Message message = new Message(MessageType.ORDER, order);
         try {
             connection.send(message);
             cookingOrder = true;
         } catch (IOException e) {
-            if(order != null) {
-                waitingOrders.put(order);
-            }
+            waitingOrders.put(order);
             throw e;
         }
     }

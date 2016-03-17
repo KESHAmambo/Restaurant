@@ -22,13 +22,14 @@ public abstract class Handler implements Runnable {
     protected void requestActorName() throws IOException, ClassNotFoundException {
         while (true) {
             connection.send(new Message(MessageType.NAME_REQUEST));
-            Message actorNameMessage = connection.receive();
-            if(actorNameMessage.getMessageType() == MessageType.ACTOR_NAME) {
-                String name = actorNameMessage.getText();
+            Message nameMessage = connection.receive();
+            if(nameMessage.getMessageType() == MessageType.ACTOR_NAME) {
+                String name = nameMessage.getText();
                 if(name != null && !name.isEmpty() && !actorsNames.contains(name)) {
                     actorName = name;
                     actorsNames.add(actorName);
                     connection.send(new Message(MessageType.NAME_ACCEPTED));
+                    Server.showNewConnectionMessage(actorName + " was connected.");
                     break;
                 }
             }

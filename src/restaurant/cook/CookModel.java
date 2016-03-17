@@ -2,17 +2,20 @@ package restaurant.cook;
 
 import restaurant.kitchen.Order;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Аркадий on 14.03.2016.
  */
 public class CookModel {
-    private Order order;
+    private Order currentOrder;
 
-    public Order getOrder() {
-        return order;
+    public Order getCurrentOrder() {
+        return currentOrder;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setCurrentOrder(Order currentOrder) {
+        this.currentOrder = currentOrder;
     }
 }

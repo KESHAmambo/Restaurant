@@ -15,5 +15,6 @@ public enum MessageType {
     ORDER_IS_READY,
     END_MEAL,
     TEXT,
+    PING,
     WARNING;
 }

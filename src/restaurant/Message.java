@@ -2,10 +2,12 @@ package restaurant;
 
 import restaurant.kitchen.Order;
 
+import java.io.Serializable;
+
 /**
  * Created by Аркадий on 13.03.2016.
  */
-public class Message {
+public class Message implements Serializable {
     private final MessageType messageType;
     private final String clientName;
     private final int tableNumber;

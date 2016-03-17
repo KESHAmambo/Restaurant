@@ -1,6 +1,5 @@
 package restaurant.administator;
 
-import restaurant.MessageType;
 import restaurant.administator.handlers.*;
 import restaurant.Message;
 import restaurant.kitchen.Order;
@@ -35,7 +34,7 @@ public class Server {
                     Socket socket = serverSocket.accept();
                     Connection connection = new Connection(socket);
                     Message handshakeMessage = connection.receive();
-                    Handler handler = HandlerFactory.newHandler(handshakeMessage, connection);
+                    Handler handler = HandlerFactory.byMessage(handshakeMessage, connection);
                     if(handler != null) {
                         executor.execute(handler);
                     }
@@ -65,6 +64,7 @@ public class Server {
     }
 
     public static void showWarningMessage(String s) {
+        ConsoleHelper.writeMessage(s);
         //TODO
     }
 
@@ -76,4 +76,8 @@ public class Server {
         //TODO
     }
 
+    public static void showNewConnectionMessage(String s) {
+        ConsoleHelper.writeMessage(s);
+        //TODO
+    }
 }

@@ -3,10 +3,10 @@ package restaurant.cook;
 /**
  * Created by Аркадий on 14.03.2016.
  */
-public class CookView {
+public class OutdatedCookView {
     CookController controller;
 
-    public CookView(CookController controller) {
+    public OutdatedCookView(CookController controller) {
         this.controller = controller;
     }
 
