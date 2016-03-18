@@ -15,6 +15,7 @@ public class Order {
     private Connection waiter;
     private int tableNumber;
     private String cook;
+    private String clientName;
 
     public List<Dish> getDishes() {
         return dishes;

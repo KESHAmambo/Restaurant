@@ -19,15 +19,15 @@ public abstract class Actor {
             int serverPort = askServerPort();
             Socket socket = new Socket(serverAddress, serverPort);
             connection = new Connection(socket);
-            clientHandshake();
-            clientMainLoop();
+            actorHandshake();
+            actorMainLoop();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             notifyConnectionStatusChanged(false);
         }
     }
 
-    protected void clientHandshake() throws IOException, ClassNotFoundException {
+    protected void actorHandshake() throws IOException, ClassNotFoundException {
         Message handshakeMessage = new Message(MessageType.COOK_CONNECTION);
         connection.send(handshakeMessage);
         String name = null;
@@ -48,7 +48,7 @@ public abstract class Actor {
         }
     }
 
-    protected abstract void clientMainLoop() throws IOException, ClassNotFoundException;
+    protected abstract void actorMainLoop() throws IOException, ClassNotFoundException;
 
     public abstract void sendMessage(Message message);
 

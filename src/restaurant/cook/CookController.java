@@ -26,7 +26,7 @@ public class CookController extends Actor {
     }
 
     @Override
-    protected void clientMainLoop() throws IOException, ClassNotFoundException {
+    protected void actorMainLoop() throws IOException, ClassNotFoundException {
         try {
             while (true) {
                 Message receivedMessage = connection.receive();
