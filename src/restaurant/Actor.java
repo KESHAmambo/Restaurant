@@ -21,14 +21,16 @@ public abstract class Actor {
             connection = new Connection(socket);
             actorHandshake();
             actorMainLoop();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | IllegalArgumentException e) {
             e.printStackTrace();
             notifyConnectionStatusChanged(false);
         }
     }
 
-    protected void actorHandshake() throws IOException, ClassNotFoundException {
-        Message handshakeMessage = new Message(MessageType.COOK_CONNECTION);
+    protected abstract void actorHandshake() throws  IOException, ClassNotFoundException;
+
+    protected void shake(MessageType messageType) throws IOException, ClassNotFoundException {
+        Message handshakeMessage = new Message(messageType);
         connection.send(handshakeMessage);
         String name = null;
         while(true) {

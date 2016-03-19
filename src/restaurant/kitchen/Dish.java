@@ -7,8 +7,13 @@ import java.util.Arrays;
  */
 public class Dish {
     private String name;
+    private double coast;
 
     public String getName() {
         return name;
+    }
+
+    public double getCoast() {
+        return coast;
     }
 }

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CookHandler extends Handler {
     private final BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
+    private BlockingQueue<Connection> waiters = Server.getWaiters();
 
     private boolean cookingOrder = false;
 
@@ -52,9 +53,26 @@ public class CookHandler extends Handler {
             Order order = message.getOrder();
             if(order != null) {
                 order.setCook(actorName);
-                order.getWaiter().send(message);
+                try {
+                    order.getWaiter().send(message);
+                } catch (IOException e) {
+                    sendToAnotherWaiter(message);
+                    e.printStackTrace();
+                }
                 cookingOrder = false;
                 Server.addOrderToCooksStatisticsBase(order, actorName);
+            }
+        }
+    }
+
+    private void sendToAnotherWaiter(Message message) throws InterruptedException {
+        while (true) {
+            try {
+                Connection newWaiter = waiters.take();
+                newWaiter.send(message);
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

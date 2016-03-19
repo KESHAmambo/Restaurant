@@ -26,6 +26,11 @@ public class CookController extends Actor {
     }
 
     @Override
+    protected void actorHandshake() throws IOException, ClassNotFoundException {
+        shake(MessageType.COOK_CONNECTION);
+    }
+
+    @Override
     protected void actorMainLoop() throws IOException, ClassNotFoundException {
         try {
             while (true) {

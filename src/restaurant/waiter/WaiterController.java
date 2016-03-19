@@ -2,6 +2,7 @@ package restaurant.waiter;
 
 import restaurant.Actor;
 import restaurant.Message;
+import restaurant.MessageType;
 import restaurant.kitchen.Order;
 import restaurant.waiter.view.WaiterView;
 
@@ -21,13 +22,18 @@ public class WaiterController extends Actor {
     }
 
     @Override
+    protected void actorHandshake() throws IOException, ClassNotFoundException {
+        shake(MessageType.WAITER_CONNECTION);
+    }
+
+    @Override
     protected void actorMainLoop() throws IOException, ClassNotFoundException {
         try {
             while (true) {
                 Message receivedMessage = connection.receive();
                 switch(receivedMessage.getMessageType()) {
                     case NEW_CLIENT:
-                        informAboutNewClient(receivedMessage.getClientName(), receivedMessage.getTableNumber());
+                        informAboutNewClient(receivedMessage.getClientName());
                         break;
                     case ORDER_IS_READY:
                         informAboutReadyOrder(receivedMessage.getOrder());
@@ -58,8 +64,8 @@ public class WaiterController extends Actor {
         view.informAboutReadyOrder(order);
     }
 
-    private void informAboutNewClient(String clientName, int tableNumber) {
-        WaiterModel.Client newClient = model.addNewClient(clientName, tableNumber);
+    private void informAboutNewClient(String clientName) {
+        WaiterModel.Client newClient = model.addNewClient(clientName);
         view.addNewClientDialog(newClient);
     }
 

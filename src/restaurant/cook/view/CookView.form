@@ -21,13 +21,13 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="b56f3" class="javax.swing.JLabel">
+          <component id="b56f3" class="javax.swing.JLabel" binding="currentOrderLable">
             <constraints border-constraint="West"/>
             <properties>
               <font name="AR CENA" size="28"/>
               <opaque value="false"/>
               <preferredSize width="250" height="50"/>
-              <text value="       Current currentOrder:"/>
+              <text value="       Current order:"/>
             </properties>
           </component>
         </children>
@@ -52,6 +52,7 @@
                 <constraints/>
                 <properties>
                   <background color="-720943"/>
+                  <editable value="false"/>
                   <font size="16"/>
                   <foreground color="-11185067"/>
                   <margin top="0" left="20" bottom="0" right="20"/>
@@ -97,6 +98,7 @@
                 <constraints/>
                 <properties>
                   <editable value="false"/>
+                  <enabled value="false"/>
                   <font size="16" style="1"/>
                   <foreground color="-10461088"/>
                   <lineWrap value="false"/>

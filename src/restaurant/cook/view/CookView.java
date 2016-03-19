@@ -24,6 +24,7 @@ public class CookView {
     private JTextArea currentOrderTextArea;
     private JButton orderIsReadyButton;
     private JTextArea previousOrdersTextArea;
+    private JLabel currentOrderLable;
 
     public CookView(final CookController controller, CookModel model) {
         this.controller = controller;
@@ -41,12 +42,29 @@ public class CookView {
     }
 
     public void initView() {
+        setNimbusLookAndFeel();
         frame = new JFrame("Brutz");
+        frame.setResizable(false);
         frame.setContentPane(this.panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private void setNimbusLookAndFeel() {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {// If Nimbus is not available, fall back to cross-platform
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ex) {} // not worth my time
+        }
     }
 
     public void refreshCurrentOrder() {

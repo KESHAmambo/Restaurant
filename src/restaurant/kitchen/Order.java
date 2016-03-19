@@ -17,6 +17,15 @@ public class Order {
     private String cook;
     private String clientName;
 
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+
     public List<Dish> getDishes() {
         return dishes;
     }
