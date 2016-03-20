@@ -10,8 +10,6 @@
     <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/CookHandler.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/Handler.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/WaiterHandler.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/kitchen/TestOrder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/kitchen/Waitor.java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

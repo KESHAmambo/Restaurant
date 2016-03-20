@@ -1,16 +1,18 @@
 package restaurant.waiter;
 
+import restaurant.kitchen.Dish;
 import restaurant.kitchen.Order;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Anatoly on 18.03.2016.
  */
 public class WaiterModel {
-    private List<Client> clients = new ArrayList<>();
+    private static List<Client> clients = new ArrayList<>();
 
     public Client addNewClient(String clientName) {
         Client client = new Client(clientName);
@@ -19,14 +21,30 @@ public class WaiterModel {
     }
 
     public void addOrderToClientBill(Order order) {
-        //TODO
+        Client client = getClientByName(order.getClientName());
+        double bill = 0;
+        for(Dish dish: order.getDishes()) {
+            bill += dish.getCoast();
+        }
+        client.setBill(client.getBill() + bill);
     }
 
     public void deleteClient(String clientName) {
-        //TODO
+        Iterator<Client> iterator = clients.iterator();
+        while(iterator.hasNext()) {
+            if(iterator.next().getName().equals(clientName)) {
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     public static Client getClientByName(String clientName) {
+        for(Client client: clients) {
+            if(client.getName().equals(clientName)) {
+                return client;
+            }
+        }
         return null;
     }
 
@@ -75,10 +93,6 @@ public class WaiterModel {
 
         public String getName() {
             return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
     }
 }
