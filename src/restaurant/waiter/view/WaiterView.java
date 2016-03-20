@@ -26,13 +26,16 @@ public class WaiterView {
     private JPanel leftBackPanel;
     private JPanel cardPanel;
     private JPanel buttonsPanel;
-    private JButton addNewClientButton;
+    /*private JButton addNewClientButton;
+    private JButton informAboutTextButton;
+    private JButton addClientAnatolyButton;
+    private JButton informAboutEndMealButton;*/
 
-    public WaiterView(WaiterController controller, WaiterModel model) {
+    public WaiterView(final WaiterController controller, WaiterModel model) {
         this.controller = controller;
         this.model = model;
 
-        // test button
+        /*// test buttons
         addNewClientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,6 +43,24 @@ public class WaiterView {
                 addNewClientDialog(WaiterView.this.model.new Client("Alex" + random.nextInt(10)));
             }
         });
+        informAboutTextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.informAboutNewText("Anatoly", "Hello, guy!");
+            }
+        });
+        addClientAnatolyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.informAboutNewClient("Anatoly");
+            }
+        });
+        informAboutEndMealButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.informAboutEndMeal("Anatoly");
+            }
+        });*/
     }
 
     public void initView() {
@@ -61,7 +82,7 @@ public class WaiterView {
                     break;
                 }
             }
-        } catch (Exception e) {// If Nimbus is not available, fall back to cross-platform
+        }catch(Exception e) {// If Nimbus is not available, fall back to cross-platform
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ex) {} // not worth my time
@@ -74,13 +95,13 @@ public class WaiterView {
     }
 
     public void notifyConnectionStatusChanged(boolean actorConnected) {
-        if (actorConnected) {
+        if(actorConnected) {
             JOptionPane.showMessageDialog(
                     frame,
                     "Connection to the server is established.",
                     "Brutz",
                     JOptionPane.INFORMATION_MESSAGE);
-        } else {
+        }else {
             JOptionPane.showMessageDialog(
                     frame,
                     "Client isn't connected to the server!",
@@ -91,15 +112,15 @@ public class WaiterView {
     }
 
     public int askServerPort() {
-        while (true) {
+        while(true) {
             String port = JOptionPane.showInputDialog(
                     frame,
                     "Enter server port:",
                     "Brutz",
                     JOptionPane.QUESTION_MESSAGE);
-            try {
+            try{
                 return Integer.parseInt(port.trim());
-            } catch (Exception e) {
+            }catch (Exception e) {
                 JOptionPane.showMessageDialog(
                         frame,
                         "Incorrect port was entered, try again.",
@@ -126,13 +147,13 @@ public class WaiterView {
     }
 
     public void addNewClientDialog(WaiterModel.Client newClient) {
-        final String clientName = newClient.getName();
+        String clientName = newClient.getName();
         JPanel dialogPanel = createPanelForDialogPanel();
         createNorthPartOfDialogPanel(clientName, dialogPanel);
-        final JTextArea messagesArea = createCenterPartOfDialogPanel(dialogPanel);
+        JTextArea messagesArea = createCenterPartOfDialogPanel(dialogPanel);
         createSouthPartOfDialogPanel(clientName, messagesArea, dialogPanel);
         cardPanel.add(dialogPanel, clientName);
-        final JPanel forButtonPanel = createButtonForChoosingDialog(clientName);
+        JPanel forButtonPanel = createButtonForChoosingDialog(clientName);
         addNecessaryFieldsToClient(newClient, dialogPanel, messagesArea, forButtonPanel);
     }
 
@@ -248,18 +269,18 @@ public class WaiterView {
     }
 
     public void informAboutNewText(String clientName, String text) {
-        WaiterModel.Client client = WaiterModel.getClientByName(clientName);
+        WaiterModel.Client client = model.getClientByName(clientName);
         JTextArea messagesArea = client.getMessagesArea();
-        messagesArea.insert(clientName + ":  " + text, 0);
-        JPanel toDialogPanel = client.getButtonPanel();
-        toDialogPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.orange));
-        toDialogPanel.setOpaque(false);
+        messagesArea.insert(clientName + ":  " + text + "\n", 0);
+        JPanel forButtonPanel = client.getButtonPanel();
+        forButtonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.orange));
+        forButtonPanel.setOpaque(false);
         buttonsPanel.revalidate();
         buttonsPanel.repaint();
     }
 
     public void informAboutEndMeal(String clientName) {
-        WaiterModel.Client client = WaiterModel.getClientByName(clientName);
+        WaiterModel.Client client = model.getClientByName(clientName);
         JOptionPane.showMessageDialog(
                 frame,
                 "Client " + clientName + " is ready to pay.\nBill: " + client.getBill(),

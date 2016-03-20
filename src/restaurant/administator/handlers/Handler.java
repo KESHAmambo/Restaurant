@@ -24,7 +24,7 @@ public abstract class Handler implements Runnable {
             connection.send(new Message(MessageType.NAME_REQUEST));
             Message nameMessage = connection.receive();
             if(nameMessage.getMessageType() == MessageType.ACTOR_NAME) {
-                String name = nameMessage.getText();
+                String name = nameMessage.getClientName();
                 if(name != null && !name.isEmpty() && !actorsNames.contains(name)) {
                     actorName = name;
                     actorsNames.add(actorName);

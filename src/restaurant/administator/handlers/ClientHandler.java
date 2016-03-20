@@ -75,7 +75,7 @@ public class ClientHandler extends Handler {
         Message newClientMessage = connection.receive();
         if (newClientMessage.getMessageType() == MessageType.NEW_CLIENT) {
             hasCurrentClient = true;
-            currentName = newClientMessage.getText();
+            currentName = newClientMessage.getClientName();
             waiter = waiters.take();
             waiters.put(waiter);
             waiter.send(newClientMessage);

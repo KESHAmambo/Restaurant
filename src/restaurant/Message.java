@@ -10,7 +10,6 @@ import java.io.Serializable;
 public class Message implements Serializable {
     private final MessageType messageType;
     private final String clientName;
-    private final int tableNumber;
     private final Order order;
     private final String text;
 
@@ -19,29 +18,18 @@ public class Message implements Serializable {
         clientName = null;
         order = null;
         text = null;
-        tableNumber = 0;
-    }
-
-    public Message(MessageType messageType, String text) {
-        this.messageType = messageType;
-        this.text = text;
-        clientName = null;
-        tableNumber = 0;
-        order = null;
     }
 
     public Message(MessageType messageType, Order order) {
         this.messageType = messageType;
         this.order = order;
         clientName = null;
-        tableNumber = 0;
         text = null;
     }
 
-    public Message(MessageType messageType, String clientName, int tableNumber) {
+    public Message(MessageType messageType, String clientName) {
         this.messageType = messageType;
         this.clientName = clientName;
-        this.tableNumber = tableNumber;
         order = null;
         text = null;
     }
@@ -50,7 +38,6 @@ public class Message implements Serializable {
         this.messageType = messageType;
         this.clientName = clientName;
         this.text = text;
-        tableNumber = 0;
         order = null;
     }
 
@@ -59,11 +46,9 @@ public class Message implements Serializable {
         this.order = order;
         clientName = null;
         text = name;
-        tableNumber = 0;
     }
 
     public Message(int tableNumber, String clientName, MessageType messageType) {
-        this.tableNumber = tableNumber;
         this.clientName = clientName;
         this.messageType = messageType;
         order = null;
@@ -76,10 +61,6 @@ public class Message implements Serializable {
 
     public String getClientName() {
         return clientName;
-    }
-
-    public int getTableNumber() {
-        return tableNumber;
     }
 
     public Order getOrder() {

@@ -7,12 +7,14 @@ import restaurant.administator.Server;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by Аркадий on 13.03.2016.
  */
 public class WaiterHandler extends Handler {
     Map<String, Connection> clientsNameToConnectionLinks = Server.getClientsNameToConnectionLinks();
+    private static BlockingQueue<Connection> waiters = Server.getWaiters();
 
     public WaiterHandler(Connection connection) {
         super(connection);
@@ -22,6 +24,7 @@ public class WaiterHandler extends Handler {
     public void run() {
         try {
             requestActorName();
+            waiters.add(connection);
             resendTextsToClients();
         } catch (IOException ignore) {
         } catch (ClassNotFoundException e) {

@@ -85,7 +85,7 @@ public class CookView {
     }
 
     public int askServerPort() {
-        while (true) {
+        while(true) {
             String port = JOptionPane.showInputDialog(
                     frame,
                     "Enter server port:",
@@ -120,7 +120,7 @@ public class CookView {
     }
 
     public void notifyConnectionStatusChanged(boolean actorConnected) {
-        if (actorConnected) {
+        if(actorConnected) {
             JOptionPane.showMessageDialog(
                     frame,
                     "Connection to the server is established.",

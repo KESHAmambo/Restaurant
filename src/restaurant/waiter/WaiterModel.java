@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Anatoly on 18.03.2016.
  */
 public class WaiterModel {
-    private static List<Client> clients = new ArrayList<>();
+    private List<Client> clients = new ArrayList<>();
 
     public Client addNewClient(String clientName) {
         Client client = new Client(clientName);
@@ -24,7 +24,7 @@ public class WaiterModel {
         Client client = getClientByName(order.getClientName());
         double bill = 0;
         for(Dish dish: order.getDishes()) {
-            bill += dish.getCoast();
+            bill += dish.getPrice();
         }
         client.setBill(client.getBill() + bill);
     }
@@ -39,7 +39,7 @@ public class WaiterModel {
         }
     }
 
-    public static Client getClientByName(String clientName) {
+    public Client getClientByName(String clientName) {
         for(Client client: clients) {
             if(client.getName().equals(clientName)) {
                 return client;
