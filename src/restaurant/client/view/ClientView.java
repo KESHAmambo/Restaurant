@@ -7,6 +7,7 @@ import restaurant.client.ClientModel;
 import restaurant.client.view.customcomponents.ImageButton;
 import restaurant.client.view.customcomponents.ImagePanel;
 import restaurant.client.view.customcomponents.TypeButton;
+import restaurant.client.view.resources.animation.MyOrderAnimation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,9 @@ import java.util.List;
  * Created by Аркадий on 20.03.2016.
  */
 public class ClientView {
+    private final int MAX_BOX_WIDTH = 768;
+    private final int MAX_BOX_HEIGHT = 550;
+
     private JFrame frame;
     private ClientController controller;
     private ClientModel model;
@@ -27,13 +31,22 @@ public class ClientView {
     private JPanel mainPanel;
     private JPanel northPanel;
     private JPanel southPanel;
-    private JPanel typesPanel;
+    private JPanel typeButtonsPanel;
     private JPanel cardPanel;
+    private JPanel boxPanel;
+    private JPanel centerPanel;
+    private JPanel myOrderPanel;
+    private JPanel backOrderPanel;
+    private JPanel currentOrderPanel;
+    private JPanel toKitchenPanel;
+    private JPanel saverPanel;
 
     private JLabel totalLabel;
     private JButton myOrderButton;
     private JButton assistanceButton;
     private JButton payButton;
+    private JButton sendToKitchenButton;
+    private JButton exitMyOrderButton;
 
     private List<JButton> typeButtons;
     private JButton burgersButton;
@@ -46,7 +59,6 @@ public class ClientView {
     private JButton coffeeButton;
     private JButton beveragesButton;
     private JButton sweetsButton;
-
 
     public ClientView(ClientController controller, ClientModel model) {
         this.controller = controller;
@@ -65,28 +77,135 @@ public class ClientView {
     }
 
     private void createUIComponents() {
-//        testButton1 = new ImageButton(new ImageIcon("src/restaurant/client/view/resources/controlbuttons/myOrder.png").getImage());
         northPanel = createNorthPanel();
         southPanel = createSouthPanel();
+        typeButtons = createTypeButtons();
+        boxPanel = createBoxPanel();
+        addListenersForTypeButtons(typeButtons);
+        typeButtonsPanel = createTypeButtonsPanel();
+    }
 
-        typeButtons = initializeTypeButtons();
+    private JPanel createBoxPanel() {
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
+        cardPanel = createCardPanel();
+        myOrderPanel = createMyOrderPanel();
+        resultPanel.add(cardPanel);
+        resultPanel.add(myOrderPanel);
+        return resultPanel;
+    }
 
-        cardPanel = new JPanel();
-        cardPanel.setLayout(new CardLayout());
-        cardPanel.setBackground(Color.green);
+    private JPanel createMyOrderPanel() {
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
+        resultPanel.setBackground(Color.decode("0x3C4147"));
+        resultPanel.setPreferredSize(new Dimension(0, MAX_BOX_HEIGHT));
+        resultPanel.setMaximumSize(new Dimension(0, MAX_BOX_HEIGHT));
+
+        exitMyOrderButton = createExitMyOrderButton();
+        backOrderPanel = createBackOrderPanel();
+
+        resultPanel.add(exitMyOrderButton);
+        resultPanel.add(backOrderPanel);
+        return resultPanel;
+    }
+
+    private JButton createExitMyOrderButton() {
+        JButton resultButton = new ImageButton(81, MAX_BOX_HEIGHT, new ImageIcon(
+                "src/restaurant/client/view/resources/controlbuttons/" +
+                        "exitMyOrderButton.jpg").getImage());
+        resultButton.addActionListener(createListenerForExitMyOrderButton());
+        return resultButton;
+    }
+
+    private ActionListener createListenerForExitMyOrderButton() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                flickOffMyOrderPanel();
+            }
+        };
+    }
+
+    private void flickOffMyOrderPanel() {
+        if(!MyOrderAnimation.isMyOrderPanelSlideLeft()) {
+            MyOrderAnimation myOrderAnimation = new MyOrderAnimation(
+                    boxPanel, cardPanel, myOrderPanel);
+            new Thread(myOrderAnimation).start();
+        }
+    }
+
+    private JPanel createBackOrderPanel() {
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
+
+        currentOrderPanel = new JPanel();
+        currentOrderPanel.setLayout(new BoxLayout(currentOrderPanel, BoxLayout.PAGE_AXIS));
+        currentOrderPanel.setBackground(Color.BLACK);
+        currentOrderPanel.setPreferredSize(new Dimension(MAX_BOX_WIDTH - 81, MAX_BOX_HEIGHT - 50));
+        currentOrderPanel.setMaximumSize(new Dimension(MAX_BOX_WIDTH - 81, MAX_BOX_HEIGHT - 50));
+        currentOrderPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        //TODO
+
+        toKitchenPanel = createToKitchenPanel();
+        resultPanel.add(currentOrderPanel);
+        resultPanel.add(toKitchenPanel);
+        return resultPanel;
+    }
+
+    private JPanel createToKitchenPanel() {
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
+        resultPanel.setPreferredSize(new Dimension(MAX_BOX_WIDTH - 81, 50));
+        resultPanel.setMaximumSize(new Dimension(MAX_BOX_WIDTH - 81, 50));
+        resultPanel.setBackground(Color.decode("0x303030"));
+        sendToKitchenButton = createSendToKitchenButton();
+        resultPanel.add(Box.createHorizontalGlue());
+        resultPanel.add(sendToKitchenButton);
+        resultPanel.add(Box.createRigidArea(new Dimension(30, 0)));
+        return resultPanel;
+    }
+
+    private JButton createSendToKitchenButton() {
+        JButton resultButton = new ImageButton(200, 40, new ImageIcon(
+                "src/restaurant/client/view/resources/controlbuttons/" +
+                        "sendToKitchen.png").getImage());
+        resultButton.addActionListener(createListenerForSendToKitchenButton());
+        return resultButton;
+    }
+
+    private ActionListener createListenerForSendToKitchenButton() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
+        };
+    }
+
+    private JPanel createCardPanel() {
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new CardLayout());
+        resultPanel.setBackground(Color.green);
+        resultPanel.setPreferredSize(new Dimension(MAX_BOX_WIDTH, MAX_BOX_HEIGHT));
+        resultPanel.setMaximumSize(new Dimension(MAX_BOX_WIDTH, MAX_BOX_HEIGHT));
+
+        saverPanel = new ImagePanel(new ImageIcon(
+                "src/restaurant/client/view/resources/panels/saver.jpg").getImage());
+        resultPanel.add(saverPanel, "saver");
+
         for(JButton typeButton: typeButtons) {
             JPanel typePanel = new ImagePanel(new ImageIcon(
                     "src/restaurant/client/view/resources/typeimages/"
                             + typeButton.getName() + "Image.jpg").getImage());
             //TODO
-            cardPanel.add(typePanel, typeButton.getName());
+            resultPanel.add(typePanel, typeButton.getName());
         }
 
-        addListenersForTypeButtons(typeButtons);
-        typesPanel = createTypesPanel();
+        return resultPanel;
     }
 
-    private List<JButton> initializeTypeButtons() {
+    private List<JButton> createTypeButtons() {
         burgersButton = new TypeButton("burgers");
         hotDogsButton = new TypeButton("hotDogs");
         sandwichesButton = new TypeButton("sandwiches");
@@ -108,20 +227,25 @@ public class ClientView {
                     JButton currentButton = (JButton) e.getSource();
                     CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
                     cardLayout.show(cardPanel, currentButton.getName());
-                    currentButton.setSelected(true);
-                    currentButton.repaint();
-                    for (JButton button: typeButtons) {
-                        if(button != currentButton) {
-                            button.setSelected(false);
-                            button.repaint();
-                        }
-                    }
+                    setNotSelectedOtherButtons(currentButton, typeButtons);
+                    flickOffMyOrderPanel();
                 }
             });
         }
     }
 
-    private JPanel createTypesPanel() {
+    private void setNotSelectedOtherButtons(JButton setSelectedButton, List<JButton> Buttons) {
+        for (JButton button: Buttons) {
+            if(button != setSelectedButton) {
+                button.setSelected(false);
+            } else {
+                setSelectedButton.setSelected(true);
+            }
+            button.repaint();
+        }
+    }
+
+    private JPanel createTypeButtonsPanel() {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         resultPanel.add(burgersButton);
@@ -177,6 +301,7 @@ public class ClientView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO
+                showSaverPanel();
                 askCurrentClientName();
                 System.out.println("pay");
             }
@@ -194,10 +319,16 @@ public class ClientView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
-                System.out.println("assistance");
+                showSaverPanel();
             }
         };
+    }
+
+    private void showSaverPanel() {
+        CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
+        cardLayout.show(cardPanel, "saver");
+        flickOffMyOrderPanel();
+        setNotSelectedOtherButtons(null, typeButtons);
     }
 
     private JPanel createNorthPanel() {
@@ -232,8 +363,9 @@ public class ClientView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
-                System.out.println("myOrder");
+                MyOrderAnimation myOrderAnimation = new MyOrderAnimation(
+                        boxPanel, cardPanel, myOrderPanel);
+                new Thread(myOrderAnimation).start();
             }
         };
     }
