@@ -1,4 +1,4 @@
-package restaurant.client.view.resources.animation;
+package restaurant.client.view.animation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +10,7 @@ public class MyOrderAnimation implements Runnable {
     private final int ONE_STEP = 8;
     private final int MAX_WIDTH = 768;
     private final int MIN_WIDTH = 0;
+    private final int MAX_HEIGHT = 550;
     private static boolean myOrderPanelSlideLeft = true;
     private JPanel cardPanel;
     private JPanel myOrderPanel;
@@ -32,14 +33,16 @@ public class MyOrderAnimation implements Runnable {
                 while(true) {
                     Dimension cardDim = cardPanel.getPreferredSize();
                     if (cardDim.getWidth() <= MIN_WIDTH) break;
-                    cardDim.setSize(cardDim.getWidth() - ONE_STEP, cardDim.getHeight());
+                    cardDim.setSize(cardDim.getWidth() - ONE_STEP, MAX_HEIGHT);
                     cardPanel.setPreferredSize(cardDim);
                     cardPanel.setMaximumSize(cardDim);
+                    cardPanel.setMinimumSize(cardDim);
 
                     Dimension myOrderDim = myOrderPanel.getPreferredSize();
-                    myOrderDim.setSize(myOrderDim.getWidth() + ONE_STEP, myOrderDim.getHeight());
+                    myOrderDim.setSize(myOrderDim.getWidth() + ONE_STEP, MAX_HEIGHT);
                     myOrderPanel.setPreferredSize(myOrderDim);
                     myOrderPanel.setMaximumSize(myOrderDim);
+                    myOrderPanel.setMinimumSize(myOrderDim);
 
                     boxPanel.revalidate();
                     boxPanel.repaint();
@@ -49,14 +52,16 @@ public class MyOrderAnimation implements Runnable {
                 while(true) {
                     Dimension cardDim = cardPanel.getPreferredSize();
                     if (cardDim.getWidth() >= MAX_WIDTH) break;
-                    cardDim.setSize(cardDim.getWidth() + ONE_STEP, cardDim.getHeight());
+                    cardDim.setSize(cardDim.getWidth() + ONE_STEP, MAX_HEIGHT);
                     cardPanel.setPreferredSize(cardDim);
                     cardPanel.setMaximumSize(cardDim);
+                    cardPanel.setMinimumSize(cardDim);
 
                     Dimension myOrderDim = myOrderPanel.getPreferredSize();
-                    myOrderDim.setSize(myOrderDim.getWidth() - ONE_STEP, myOrderDim.getHeight());
+                    myOrderDim.setSize(myOrderDim.getWidth() - ONE_STEP, MAX_HEIGHT);
                     myOrderPanel.setPreferredSize(myOrderDim);
                     myOrderPanel.setMaximumSize(myOrderDim);
+                    myOrderPanel.setMinimumSize(myOrderDim);
 
                     boxPanel.revalidate();
                     boxPanel.repaint();

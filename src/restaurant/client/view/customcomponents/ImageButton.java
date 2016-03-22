@@ -23,6 +23,7 @@ public class ImageButton extends JButton {
         this.setPreferredSize(new Dimension(width, height));
         this.setMaximumSize(new Dimension(width, height));
         this.setOpaque(false);
+        this.setContentAreaFilled(false);
         this.setBorderPainted(false);
         this.setFocusPainted(false);
     }

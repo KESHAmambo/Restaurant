@@ -5,6 +5,7 @@ import restaurant.administator.Connection;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,5 +53,15 @@ public class Order {
 
     public void addDish(Dish dish) {
         dishes.add(dish);
+    }
+
+    public void removeDish(Dish dish) {
+        Iterator<Dish> iterator = dishes.iterator();
+        while (iterator.hasNext()) {
+            if(iterator.next().getName().equals(dish.getName())) {
+                iterator.remove();
+                break;
+            }
+        }
     }
 }
