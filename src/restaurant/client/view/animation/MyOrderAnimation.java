@@ -11,7 +11,7 @@ public class MyOrderAnimation implements Runnable {
     private final int MAX_WIDTH = 768;
     private final int MIN_WIDTH = 0;
     private final int MAX_HEIGHT = 550;
-    private static boolean myOrderPanelSlideLeft = true;
+    private static boolean myOrderPanelSlideToLeft = true;
     private JPanel cardPanel;
     private JPanel myOrderPanel;
     private JPanel boxPanel;
@@ -22,14 +22,14 @@ public class MyOrderAnimation implements Runnable {
         this.boxPanel = boxPanel;
     }
 
-    public static boolean isMyOrderPanelSlideLeft() {
-        return myOrderPanelSlideLeft;
+    public static boolean isMyOrderPanelSlideToLeft() {
+        return myOrderPanelSlideToLeft;
     }
 
     @Override
     public void run() {
         try {
-            if(myOrderPanelSlideLeft) {
+            if(myOrderPanelSlideToLeft) {
                 while(true) {
                     Dimension cardDim = cardPanel.getPreferredSize();
                     if (cardDim.getWidth() <= MIN_WIDTH) break;
@@ -71,6 +71,6 @@ public class MyOrderAnimation implements Runnable {
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
-        myOrderPanelSlideLeft = !myOrderPanelSlideLeft;
+        myOrderPanelSlideToLeft = !myOrderPanelSlideToLeft;
     }
 }

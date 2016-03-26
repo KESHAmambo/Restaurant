@@ -11,11 +11,8 @@ import java.io.IOException;
  * Created by Аркадий on 20.03.2016.
  */
 public class ClientController extends Actor {
-    //
-    // test commit changes
-    //
-    ClientModel model = new ClientModel();
-    ClientView view = new ClientView(this, model);
+    private ClientModel model = new ClientModel();
+    private ClientView view = new ClientView(this, model);
 
     public static void main(String[] args) {
         ClientController clientController = new ClientController();

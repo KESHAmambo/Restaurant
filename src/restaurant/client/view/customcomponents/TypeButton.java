@@ -9,7 +9,7 @@ import java.awt.*;
  * Created by Аркадий on 20.03.2016.
  */
 public class TypeButton extends ImageButton {
-    Image imageOn;
+    private Image imageOn;
 
     public TypeButton(String typeName) {
         super(typeName);

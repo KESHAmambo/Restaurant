@@ -4,9 +4,7 @@ import restaurant.ConsoleHelper;
 import restaurant.administator.Connection;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Аркадий on 31.01.2016.
@@ -63,5 +61,9 @@ public class Order {
                 break;
             }
         }
+    }
+
+    public Set<Dish> getDifferentDishes() {
+        return new HashSet<>(dishes);
     }
 }

@@ -12,8 +12,8 @@ import java.io.IOException;
  * Created by Anatoly on 18.03.2016.
  */
 public class WaiterController extends Actor {
-    WaiterModel model = new WaiterModel();
-    WaiterView view = new WaiterView(this, model);
+    private WaiterModel model = new WaiterModel();
+    private WaiterView view = new WaiterView(this, model);
 
     public static void main(String[] args) {
         WaiterController waiterController = new WaiterController();

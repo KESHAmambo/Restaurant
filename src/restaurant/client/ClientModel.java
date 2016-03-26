@@ -12,16 +12,25 @@ public class ClientModel {
     private Order order;
     private int tableNumber;
     private String currentClientName;
-    private double bill;
+    private double currentBill;
+    private double finalBill;
 
-    public double getBill() {
-        return bill;
+    public double getFinalBill() {
+        return finalBill;
     }
 
-    public void setBill(double bill) {
-        this.bill = bill;
-        if(bill < 0) {
-            this.bill = 0;
+    public void setFinalBill(double finalBill) {
+        this.finalBill = finalBill;
+    }
+
+    public double getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(double currentBill) {
+        this.currentBill = currentBill;
+        if(currentBill < 0) {
+            this.currentBill = 0;
         }
     }
 
