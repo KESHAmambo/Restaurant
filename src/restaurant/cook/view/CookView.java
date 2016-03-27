@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Аркадий on 16.03.2016.
@@ -24,21 +26,27 @@ public class CookView {
     private JTextArea currentOrderTextArea;
     private JButton orderIsReadyButton;
     private JTextArea previousOrdersTextArea;
-    private JLabel currentOrderLable;
+    private JLabel currentOrderLabel;
 
     public CookView(final CookController controller, CookModel model) {
         this.controller = controller;
         this.model = model;
 
-        orderIsReadyButton.addActionListener(new ActionListener() {
+        orderIsReadyButton.addActionListener(
+                createListenerForOrderIsReadyButton(controller));
+    }
+
+    private ActionListener createListenerForOrderIsReadyButton(final CookController controller) {
+        return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 orderIsReadyButton.setEnabled(false);
-                Message readyMessage = new Message(MessageType.ORDER_IS_READY, CookView.this.model.getCurrentOrder());
+                Message readyMessage = new Message(
+                        MessageType.ORDER_IS_READY, model.getCurrentOrder());
                 controller.sendMessage(readyMessage);
                 refreshPreviousOrders();
             }
-        });
+        };
     }
 
     public void initView() {
@@ -68,20 +76,21 @@ public class CookView {
     }
 
     public void refreshCurrentOrder() {
-        Order order = controller.getModel().getCurrentOrder();
-        currentOrderTextArea.setText("");
-        for(Dish dish: order.getDishes()) {
-            currentOrderTextArea.insert(dish.getName() + "\n", 0);
+        Order order = model.getCurrentOrder();
+        Map<Dish, Integer> differentDishesCount = order.getDifferentDishesCount();
+        for(Map.Entry<Dish, Integer> pair: differentDishesCount.entrySet()) {
+            currentOrderTextArea.insert(pair.getValue() + " X " +
+                    pair.getKey().getName() + "\n", 0);
         }
+        currentOrderTextArea.insert(new Date().toString() +
+                " Order for: " + order.getClientName() + "\n", 0);
         orderIsReadyButton.setEnabled(true);
     }
 
     public void refreshPreviousOrders() {
-        Order previousOrder = controller.getModel().getCurrentOrder();
-        for(Dish dish: previousOrder.getDishes()) {
-            previousOrdersTextArea.insert(dish.getName() + "\n", 0);
-        }
-        previousOrdersTextArea.insert("Order:\n", 0);
+        String previousOrderText = currentOrderTextArea.getText();
+        currentOrderTextArea.setText("");
+        previousOrdersTextArea.insert("\n" + previousOrderText, 0);
     }
 
     public int askServerPort() {

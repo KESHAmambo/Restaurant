@@ -42,7 +42,7 @@ public class WaiterController extends Actor {
                         informAboutNewText(receivedMessage.getClientName(), receivedMessage.getText());
                         break;
                     case END_MEAL:
-                        informAboutEndMeal(receivedMessage.getClientName());
+                        informAboutEndMeal(receivedMessage.getClientName(), receivedMessage.getBill());
                 }
             }
         } finally {
@@ -50,8 +50,8 @@ public class WaiterController extends Actor {
         }
     }
 
-    private void informAboutEndMeal(String clientName) {
-        view.informAboutEndMeal(clientName);
+    private void informAboutEndMeal(String clientName, double bill) {
+        view.informAboutEndMeal(clientName, bill);
         model.deleteClient(clientName);
     }
 
@@ -60,7 +60,6 @@ public class WaiterController extends Actor {
     }
 
     private void informAboutReadyOrder(Order order) {
-        model.addOrderToClientBill(order);
         view.informAboutReadyOrder(order);
     }
 

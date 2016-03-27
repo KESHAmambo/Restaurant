@@ -4,17 +4,26 @@ import restaurant.ConsoleHelper;
 import restaurant.administator.Connection;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by Аркадий on 31.01.2016.
  */
-public class Order {
-    private List<Dish> dishes = new ArrayList<>();
-    private Connection waiter;
+public class Order implements Serializable {
+    private ArrayList<Dish> dishes = new ArrayList<>();
     private int tableNumber;
+    private String waiter;
     private String cook;
     private String clientName;
+
+    public String getWaiter() {
+        return waiter;
+    }
+
+    public void setWaiter(String waiter) {
+        this.waiter = waiter;
+    }
 
     public String getClientName() {
         return clientName;
@@ -31,14 +40,6 @@ public class Order {
 
     public int getTableNumber() {
         return tableNumber;
-    }
-
-    public Connection getWaiter() {
-        return waiter;
-    }
-
-    public void setWaiter(Connection waiter) {
-        this.waiter = waiter;
     }
 
     public String getCook() {
@@ -65,5 +66,17 @@ public class Order {
 
     public Set<Dish> getDifferentDishes() {
         return new HashSet<>(dishes);
+    }
+
+    public Map<Dish, Integer> getDifferentDishesCount() {
+        Map<Dish, Integer> resultMap = new HashMap<>();
+        for(Dish dish: dishes) {
+            if(resultMap.containsKey(dish)) {
+                resultMap.put(dish, resultMap.get(dish) + 1);
+            } else {
+                resultMap.put(dish, 1);
+            }
+        }
+        return resultMap;
     }
 }

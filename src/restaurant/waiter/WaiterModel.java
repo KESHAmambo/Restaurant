@@ -20,15 +20,6 @@ public class WaiterModel {
         return client;
     }
 
-    public void addOrderToClientBill(Order order) {
-        Client client = getClientByName(order.getClientName());
-        double bill = 0;
-        for(Dish dish: order.getDishes()) {
-            bill += dish.getPrice();
-        }
-        client.setBill(client.getBill() + bill);
-    }
-
     public void deleteClient(String clientName) {
         Iterator<Client> iterator = clients.iterator();
         while(iterator.hasNext()) {
@@ -53,7 +44,6 @@ public class WaiterModel {
         private JPanel dialogPanel;
         private JTextArea messagesArea;
         private JPanel buttonPanel;
-        private double bill;
 
         public Client(String name) {
             this.name = name;
@@ -65,14 +55,6 @@ public class WaiterModel {
 
         public void setDialogPanel(JPanel dialogPanel) {
             this.dialogPanel = dialogPanel;
-        }
-
-        public double getBill() {
-            return bill;
-        }
-
-        public void setBill(double bill) {
-            this.bill = bill;
         }
 
         public JTextArea getMessagesArea() {

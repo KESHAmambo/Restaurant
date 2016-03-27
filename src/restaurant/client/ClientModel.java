@@ -1,5 +1,6 @@
 package restaurant.client;
 
+import restaurant.client.view.ClientView;
 import restaurant.kitchen.Dish;
 import restaurant.kitchen.Menu;
 import restaurant.kitchen.Order;
@@ -111,5 +112,11 @@ public class ClientModel {
             order.setClientName(currentClientName);
         }
         order.addDish(dish);
+    }
+
+    public void setOrderEmpty() {
+        Order emptyOrder = new Order();
+        emptyOrder.setClientName(getCurrentClientName());
+        setOrder(emptyOrder);
     }
 }

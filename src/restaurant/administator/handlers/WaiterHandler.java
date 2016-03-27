@@ -13,8 +13,11 @@ import java.util.concurrent.BlockingQueue;
  * Created by Аркадий on 13.03.2016.
  */
 public class WaiterHandler extends Handler {
-    Map<String, Connection> clientsNameToConnectionLinks = Server.getClientsNameToConnectionLinks();
-    private static BlockingQueue<Connection> waiters = Server.getWaiters();
+    private Map<String, Connection> waitersLinksFromNameToConnection =
+            Server.getWaitersLinksFromNameToConnection();
+    private Map<String, Connection> clientsLinksFromNameToConnection =
+            Server.getClientsLinksFromNameToConnection();
+    private BlockingQueue<String> waiters = Server.getWaiters();
 
     public WaiterHandler(Connection connection) {
         super(connection);
@@ -24,26 +27,25 @@ public class WaiterHandler extends Handler {
     public void run() {
         try {
             requestActorName();
-            waiters.add(connection);
-            resendTextsToClients();
-        } catch (IOException ignore) {
-        } catch (ClassNotFoundException e) {
+            waiters.add(actorName);
+            waitersLinksFromNameToConnection.put(actorName, connection);
+            handlerMainLoop();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-            Server.showWarningMessage("Waiter " + actorName + " was disconnected!");
-            Server.getActorsNames().remove(actorName);
-            try {
-                connection.close();
-            } catch (IOException ignore) {}
+            waiters.remove(actorName);
+            waitersLinksFromNameToConnection.remove(actorName);
+            informServerAndCloseConnection("Waiter");
         }
     }
 
-    private void resendTextsToClients() throws IOException, ClassNotFoundException {
+    @Override
+    protected void handlerMainLoop() throws IOException, ClassNotFoundException {
         while(true) {
             Message message = connection.receive();
             String clientName = message.getClientName();
             if(message.getMessageType() == MessageType.TEXT && clientName != null) {
-                Connection clientConnection = clientsNameToConnectionLinks.get(clientName);
+                Connection clientConnection = clientsLinksFromNameToConnection.get(clientName);
                 if (clientConnection != null) {
                     clientConnection.send(message);
                 }

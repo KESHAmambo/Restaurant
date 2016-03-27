@@ -231,6 +231,10 @@ public class ClientView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO
+                controller.sendMessage(new Message(MessageType.ORDER, model.getOrder()));
+                model.setFinalBill(model.getCurrentBill());
+                model.setOrderEmpty();
+                cleanCurrentOrderPanel();
             }
         };
     }
@@ -650,23 +654,26 @@ public class ClientView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                controller.sendMessage(new Message(
+                        MessageType.END_MEAL, model.getCurrentClientName(), model.getFinalBill()));
+                showNotifyWindow(frame,
+                        String.format("Waiter will come to you in a minute.\n" +
+                        "Your bill: %.2f\nThank you! Come again!", model.getFinalBill()),
+                        JOptionPane.INFORMATION_MESSAGE);
+                removeDataOfPayingClient();
+
+                askNewClientName();
+                model.setOrderEmpty();
+            }
+
+            private void removeDataOfPayingClient() {
                 myOrderButton.setNotificationOn(false);
                 showSaverPanel();
-//                controller.sendMessage(new Message(
-//                        MessageType.END_MEAL, model.getCurrentClientName()));
-                showNotifyWindow(frame, "Waiter will come to you in a minute.\n" +
-                        "Your bill: " + model.getFinalBill() +
-                        "\nThank you! Come again!", JOptionPane.INFORMATION_MESSAGE);
-
-                model.setOrder(new Order());
                 model.setCurrentBill(0);
                 model.setFinalBill(0);
                 updateTotalLabel();
                 messagesTextArea.setText("");
                 cleanCurrentOrderPanel();
-
-                askCurrentClientName();
             }
         };
     }
@@ -761,7 +768,6 @@ public class ClientView {
     // -----------------------------------------------------------------------------
 
     public void informAboutNewText(String text) {
-        //TODO
         assistanceButton.setNotificationOn(true);
         messagesTextArea.insert("Waiter: " + text + "\n", 0);
     }
@@ -815,7 +821,7 @@ public class ClientView {
         }
     }
 
-    public void askCurrentClientName() {
+    public void askNewClientName() {
         String currentName;
         while (true) {
             currentName = JOptionPane.showInputDialog(

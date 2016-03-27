@@ -1,10 +1,12 @@
 package restaurant.kitchen;
 
 
+import java.io.Serializable;
+
 /**
  * Created by Eduard 16.03.2016
  */
-public class Dish {
+public class Dish implements Serializable {
     private String type;
     private String name;
     private String fullDescription;

@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/restaurant/Message.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/MessageType.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/Connection.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/ConsoleHelper.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/Server.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/ClientHandler.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/CookHandler.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/Handler.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/administator/handlers/WaiterHandler.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/client/view/resources/controlbuttons" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/client/view/resources/panels" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/client/view/resources/typebuttons" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/restaurant/client/view/resources/typeimages" charset="windows-1251" />
-    <file url="PROJECT" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/restaurant/waiter/WaiterController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/restaurant/waiter/WaiterModel.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/restaurant/waiter/view/WaiterView.java" charset="UTF-8" />
   </component>
 </project>

@@ -27,7 +27,7 @@ public class ClientController extends Actor {
 
     @Override
     protected void actorMainLoop() throws IOException, ClassNotFoundException {
-        askCurrentClientName();
+        askNewClientName();
         while(true) {
             Message message = connection.receive();
             if(message.getMessageType() == MessageType.TEXT) {
@@ -36,8 +36,8 @@ public class ClientController extends Actor {
         }
     }
 
-    private void askCurrentClientName() {
-        view.askCurrentClientName();
+    private void askNewClientName() {
+        view.askNewClientName();
     }
 
     private void informAboutNewText(String text) {

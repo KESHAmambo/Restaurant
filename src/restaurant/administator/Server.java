@@ -19,14 +19,21 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Server {
     private static BlockingQueue<Order> waitingOrders = new LinkedBlockingQueue<>();
-    private static BlockingQueue<Connection> waiters = new LinkedBlockingQueue<>();
-    private static Map<String, Connection> clientsNameToConnectionLinks = Collections.synchronizedMap(new HashMap<String, Connection>());
+    private static BlockingQueue<String> waiters = new LinkedBlockingQueue<>();
+    private static Map<String, Connection> clientsLinksFromNameToConnection =
+            Collections.synchronizedMap(new HashMap<String, Connection>());
     private static List<String> actorsNames = Collections.synchronizedList(new ArrayList<String>());
+    private static Map<String, Connection> waitersLinksFromNameToConnection =
+            Collections.synchronizedMap(new HashMap<String, Connection>());
+
+    private Server() {}
 
     public static void main(String[] args) {
         String address = ConsoleHelper.readString();
         int serverPort = ConsoleHelper.readInt();
-        try(ServerSocket serverSocket = new ServerSocket(serverPort, 50, InetAddress.getByName(address))){
+        try(ServerSocket serverSocket = new ServerSocket(
+                serverPort, 50, InetAddress.getByName(address)))
+        {
             ConsoleHelper.writeMessage("Server is started.");
             Executor executor = Executors.newCachedThreadPool();
             while(true) {
@@ -51,12 +58,16 @@ public class Server {
         return waitingOrders;
     }
 
-    public static BlockingQueue<Connection> getWaiters() {
+    public static BlockingQueue<String> getWaiters() {
         return waiters;
     }
 
-    public static Map<String, Connection> getClientsNameToConnectionLinks() {
-        return clientsNameToConnectionLinks;
+    public static Map<String, Connection> getWaitersLinksFromNameToConnection() {
+        return waitersLinksFromNameToConnection;
+    }
+
+    public static Map<String, Connection> getClientsLinksFromNameToConnection() {
+        return clientsLinksFromNameToConnection;
     }
 
     public static List<String> getActorsNames() {

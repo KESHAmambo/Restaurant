@@ -35,4 +35,15 @@ public abstract class Handler implements Runnable {
             }
         }
     }
+
+    protected abstract void handlerMainLoop()
+            throws IOException, ClassNotFoundException, InterruptedException;
+
+    protected void informServerAndCloseConnection(String actorType) {
+        Server.showWarningMessage(actorType + " " + actorName + " was disconnected!");
+        Server.getActorsNames().remove(actorName);
+        try {
+            connection.close();
+        } catch (IOException ignore) {}
+    }
 }

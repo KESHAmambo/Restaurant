@@ -14,11 +14,15 @@ import java.util.concurrent.BlockingQueue;
  * Created by Аркадий on 13.03.2016.
  */
 public class ClientHandler extends Handler {
-    Map<String, Connection> clientsNameToConnectionLinks = Server.getClientsNameToConnectionLinks();
-    BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
-    private BlockingQueue<Connection> waiters = Server.getWaiters();
+    private Map<String, Connection> clientsLinksFromNameToConnection =
+            Server.getClientsLinksFromNameToConnection();
+    private Map<String, Connection> waitersLinksFromNameToConnection =
+            Server.getWaitersLinksFromNameToConnection();
+    private BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
+    private BlockingQueue<String> waiters = Server.getWaiters();
 
-    private Connection waiter;
+    private String waiterName;
+    private Connection waiterConnection;
     private String currentName;
     private boolean hasCurrentClient = false;
 
@@ -30,44 +34,76 @@ public class ClientHandler extends Handler {
     public void run() {
         try {
             requestActorName();
-            while (true) {
-                if (!hasCurrentClient) {
-                    waitForNewClient();
-                } else {
-                    workWithCurrentClient();
-                }
-            }
-        } catch (IOException ignore) {
-        } catch (InterruptedException | ClassNotFoundException e) {
+            handlerMainLoop();
+        } catch (IOException | InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-            Server.showWarningMessage("Client " + actorName + " was disconnected!");
-            Server.getActorsNames().remove(actorName);
-            try {
-                connection.close();
-            } catch (IOException ignore) {}
+            informServerAndCloseConnection("Client");
         }
     }
 
-    private void workWithCurrentClient() throws IOException, ClassNotFoundException, InterruptedException {
+
+
+    @Override
+    protected void handlerMainLoop() throws IOException, ClassNotFoundException, InterruptedException {
+        while (true) {
+            if (!hasCurrentClient) {
+                waitForNewClient();
+            } else {
+                workWithCurrentClient();
+            }
+        }
+    }
+
+    private void workWithCurrentClient()
+            throws IOException, ClassNotFoundException, InterruptedException {
         Message message = connection.receive();
+
         switch (message.getMessageType()) {
             case ORDER:
                 Order order = message.getOrder();
                 if (order != null) {
-                    order.setWaiter(waiter);
+                    order.setWaiter(waiterName);
                     waitingOrders.put(order);
                     Server.addOrderToClientsStatisticsBase(order, actorName);
                 }
                 break;
             case TEXT:
-                waiter.send(message);
+                try {
+                    waiterConnection.send(message);
+                } catch (IOException e) {
+                    setNewWaiterAndSend(message, true);
+                }
                 break;
             case END_MEAL:
                 hasCurrentClient = false;
-                clientsNameToConnectionLinks.remove(currentName);
-                waiter.send(message);
+                clientsLinksFromNameToConnection.remove(currentName);
+                try {
+                    waiterConnection.send(message);
+                } catch (IOException e) {
+                    setNewWaiterAndSend(message, true);
+                }
                 break;
+        }
+    }
+
+    /**
+     * If waiter was disconnected, then IOException throws
+     * while trying to send him a message.
+     * So we should set new waiter and waiterConnection for
+     * current client and inform that waiter, that this
+     * client is now in his area of responsibility.
+     */
+    private void setNewWaiterAndSend(Message message, boolean informAboutNewClient) throws InterruptedException {
+        try {
+            setNewWaiter();
+            if (informAboutNewClient) {
+                waiterConnection.send(new Message(
+                        MessageType.NEW_CLIENT, message.getClientName()));
+            }
+            waiterConnection.send(message);
+        } catch (IOException e) {
+            setNewWaiterAndSend(message, informAboutNewClient);
         }
     }
 
@@ -76,10 +112,15 @@ public class ClientHandler extends Handler {
         if (newClientMessage.getMessageType() == MessageType.NEW_CLIENT) {
             hasCurrentClient = true;
             currentName = newClientMessage.getClientName();
-            waiter = waiters.take();
-            waiters.put(waiter);
-            waiter.send(newClientMessage);
-            clientsNameToConnectionLinks.put(currentName, connection);
+            clientsLinksFromNameToConnection.put(currentName, connection);
+
+            setNewWaiterAndSend(newClientMessage, false);
         }
+    }
+
+    private void setNewWaiter() throws InterruptedException {
+        waiterName = waiters.take();
+        waiters.put(waiterName);
+        waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
     }
 }

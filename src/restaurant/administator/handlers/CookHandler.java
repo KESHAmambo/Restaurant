@@ -7,6 +7,7 @@ import restaurant.administator.Server;
 import restaurant.kitchen.Order;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -14,8 +15,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Аркадий on 13.03.2016.
  */
 public class CookHandler extends Handler {
-    private final BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
-    private BlockingQueue<Connection> waiters = Server.getWaiters();
+    private BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
+    private BlockingQueue<String> waiters = Server.getWaiters();
+    private Map<String, Connection> waitersLinksFromNameToConnection =
+            Server.getWaitersLinksFromNameToConnection();
 
     private boolean cookingOrder = false;
 
@@ -28,22 +31,23 @@ public class CookHandler extends Handler {
         cookingOrder = false;
         try {
             requestActorName();
-            while(true) {
-                if(!cookingOrder) {
-                    waitForOrder();
-                } else {
-                    waitForCooking();
-                }
-            }
-        } catch (IOException ignore) {
-        } catch (InterruptedException | ClassNotFoundException e) {
+            handlerMainLoop();
+        } catch (IOException | InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-            Server.showWarningMessage("Cook " + actorName + " was disconnected!");
-            Server.getActorsNames().remove(actorName);
-            try {
-                connection.close();
-            } catch (IOException ignore) {}
+            informServerAndCloseConnection("Cook");
+        }
+    }
+
+    @Override
+    protected void handlerMainLoop()
+            throws InterruptedException, IOException, ClassNotFoundException {
+        while(true) {
+            if(!cookingOrder) {
+                waitForOrder();
+            } else {
+                waitForCooking();
+            }
         }
     }
 
@@ -54,8 +58,10 @@ public class CookHandler extends Handler {
             if(order != null) {
                 order.setCook(actorName);
                 try {
-                    order.getWaiter().send(message);
-                } catch (IOException e) {
+                    String waiterName = order.getWaiter();
+                    Connection waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
+                    waiterConnection.send(message);
+                } catch (IOException | NullPointerException e) {
                     sendToAnotherWaiter(message);
                     e.printStackTrace();
                 }
@@ -68,13 +74,16 @@ public class CookHandler extends Handler {
     private void sendToAnotherWaiter(Message message) throws InterruptedException {
         while (true) {
             try {
-                Connection newWaiter = waiters.take();
-                newWaiter.send(message);
+                String waiterName = waiters.take();
+                waiters.put(waiterName);
+                Connection waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
+                waiterConnection.send(message);
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        System.out.println("RESENT TO ANOTHER WAITER");
     }
 
     private void waitForOrder() throws InterruptedException, IOException {

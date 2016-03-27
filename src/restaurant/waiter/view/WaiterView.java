@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.Random;
 
 /**
  * Created by Anatoly on 18.03.2016.
@@ -31,36 +30,9 @@ public class WaiterView {
     private JButton addClientAnatolyButton;
     private JButton informAboutEndMealButton;*/
 
-    public WaiterView(final WaiterController controller, WaiterModel model) {
+    public WaiterView(WaiterController controller, WaiterModel model) {
         this.controller = controller;
         this.model = model;
-
-        /*// test buttons
-        addNewClientButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Random random = new Random();
-                addNewClientDialog(WaiterView.this.model.new Client("Alex" + random.nextInt(10)));
-            }
-        });
-        informAboutTextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.informAboutNewText("Anatoly", "Hello, guy!");
-            }
-        });
-        addClientAnatolyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.informAboutNewClient("Anatoly");
-            }
-        });
-        informAboutEndMealButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.informAboutEndMeal("Anatoly");
-            }
-        });*/
     }
 
     public void initView() {
@@ -153,7 +125,7 @@ public class WaiterView {
         JTextArea messagesArea = createCenterPartOfDialogPanel(dialogPanel);
         createSouthPartOfDialogPanel(clientName, messagesArea, dialogPanel);
         cardPanel.add(dialogPanel, clientName);
-        JPanel forButtonPanel = createButtonForChoosingDialog(clientName);
+        JPanel forButtonPanel = createPanelForChoosingDialog(clientName);
         addNecessaryFieldsToClient(newClient, dialogPanel, messagesArea, forButtonPanel);
     }
 
@@ -170,87 +142,139 @@ public class WaiterView {
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.LINE_AXIS));
         northPanel.setOpaque(false);
         northPanel.setBorder(BorderFactory.createLineBorder(Color.white));
-        JLabel label = new JLabel(clientName);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        Font labelFont = new Font("Ar Cena", Font.PLAIN, 20);
-        label.setFont(labelFont);
-        label.setHorizontalTextPosition(SwingConstants.CENTER);
+
+        JLabel clientNameLabel = createClientNameLabel(clientName);
+
         northPanel.add(Box.createRigidArea(new Dimension(0, 65)));
         northPanel.add(Box.createHorizontalGlue());
-        northPanel.add(label);
+        northPanel.add(clientNameLabel);
         northPanel.add(Box.createHorizontalGlue());
+
         dialogPanel.add(northPanel, BorderLayout.NORTH);
+    }
+
+    private JLabel createClientNameLabel(String clientName) {
+        JLabel clientNameLabel = new JLabel(clientName);
+        clientNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        clientNameLabel.setFont(new Font("Ar Cena", Font.PLAIN, 20));
+        clientNameLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        return clientNameLabel;
     }
 
     private JTextArea createCenterPartOfDialogPanel(JPanel dialogPanel) {
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridLayout());
-        final JTextArea messagesArea = new JTextArea();
-        messagesArea.setEditable(false);
-        messagesArea.setLineWrap(true);
-        messagesArea.setWrapStyleWord(true);
+
+        JTextArea messagesArea = createMessagesArea();
         JScrollPane messagesScrollPane = new JScrollPane(messagesArea);
+
         centerPanel.add(messagesScrollPane);
         dialogPanel.add(centerPanel, BorderLayout.CENTER);
         return messagesArea;
     }
 
-    private void createSouthPartOfDialogPanel(final String clientName, final JTextArea messagesArea, JPanel dialogPanel) {
+    private JTextArea createMessagesArea() {
+        JTextArea messagesArea = new JTextArea();
+        messagesArea.setEditable(false);
+        messagesArea.setLineWrap(true);
+        messagesArea.setWrapStyleWord(true);
+        return messagesArea;
+    }
+
+    private void createSouthPartOfDialogPanel(
+            String clientName, JTextArea messagesArea,
+            JPanel dialogPanel) {
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.PAGE_AXIS));
         southPanel.setOpaque(false);
         southPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 10));
-        final JTextField messageToSendField = new JTextField();
-        messageToSendField.setPreferredSize(new Dimension(380, 30));
-        messageToSendField.setMaximumSize(new Dimension(380, 30));
-        Button sendButton = new Button("SEND");
-        sendButton.setPreferredSize(new Dimension(380, 40));
-        sendButton.setMaximumSize(new Dimension(380, 40));
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String text = messageToSendField.getText();
-                if (!"".equals(text.trim())) {
-                    messageToSendField.setText("");
-                    messagesArea.insert("You: " + text + "\n", 0);
-                    controller.sendMessage(new Message(MessageType.TEXT, clientName, text));
-                }
-            }
-        });
-        southPanel.add(messageToSendField);
+
+        JTextField sendingMessageField = createSendingMessageField();
+        Button sendButton = createSendButton(clientName, messagesArea, sendingMessageField);
+
+        southPanel.add(sendingMessageField);
         southPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         southPanel.add(sendButton);
         dialogPanel.add(southPanel, BorderLayout.SOUTH);
     }
 
-    private JPanel createButtonForChoosingDialog(final String clientName) {
-        final JPanel forButtonPanel = new JPanel();
+    private Button createSendButton(
+            String clientName, JTextArea messagesArea,
+            JTextField sendingMessageField) {
+        Button sendButton = new Button("SEND");
+        sendButton.setPreferredSize(new Dimension(380, 40));
+        sendButton.setMaximumSize(new Dimension(380, 40));
+        sendButton.addActionListener(createListenerForSendButton(
+                clientName, messagesArea, sendingMessageField));
+        return sendButton;
+    }
+
+    private ActionListener createListenerForSendButton(
+            final String clientName, final JTextArea messagesArea,
+            final JTextField sendingMessageField) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = sendingMessageField.getText();
+                if (!"".equals(text.trim())) {
+                    sendingMessageField.setText("");
+                    messagesArea.insert("You: " + text + "\n", 0);
+                    controller.sendMessage(new Message(MessageType.TEXT, clientName, text));
+                }
+            }
+        };
+    }
+
+    private JTextField createSendingMessageField() {
+        JTextField sendingMessageField = new JTextField();
+        sendingMessageField.setPreferredSize(new Dimension(380, 30));
+        sendingMessageField.setMaximumSize(new Dimension(380, 30));
+        return sendingMessageField;
+    }
+
+    private JPanel createPanelForChoosingDialog(String clientName) {
+        JPanel forButtonPanel = new JPanel();
         forButtonPanel.setLayout(new BoxLayout(forButtonPanel, BoxLayout.LINE_AXIS));
         forButtonPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         forButtonPanel.setOpaque(false);
+
+        createToDialogButton(clientName, forButtonPanel);
+
+        buttonsPanel.add(forButtonPanel);
+        updateButtonsPanel();
+        return forButtonPanel;
+    }
+
+    private void updateButtonsPanel() {
+        buttonsPanel.revalidate();
+        buttonsPanel.repaint();
+    }
+
+    private void createToDialogButton(String clientName, JPanel forButtonPanel) {
         JButton toDialogButton = new JButton(clientName);
         toDialogButton.setPreferredSize(new Dimension(150, 32));
         toDialogButton.setMaximumSize(new Dimension(150, 32));
-        toDialogButton.addActionListener(new ActionListener() {
+        toDialogButton.addActionListener(createListenerForToDialogButton(
+                clientName, forButtonPanel));
+        forButtonPanel.add(toDialogButton);
+    }
+
+    private ActionListener createListenerForToDialogButton(
+            final String clientName, final JPanel forButtonPanel) {
+        return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CardLayout cl = (CardLayout) cardPanel.getLayout();
                 cl.show(cardPanel, clientName);
                 forButtonPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
                 forButtonPanel.setOpaque(false);
-                buttonsPanel.revalidate();
-                buttonsPanel.repaint();
+                updateButtonsPanel();
             }
-        });
-        forButtonPanel.add(toDialogButton);
-        buttonsPanel.add(forButtonPanel);
-        buttonsPanel.revalidate();
-        buttonsPanel.repaint();
-        return forButtonPanel;
+        };
     }
 
-    /**Setting necessary fields to newClient to have access to
-     * dialog messages area and button panel background in future
+    /**Setting necessary fields for newClient to have access to
+     * dialog messages area and button panel in future
      */
     private void addNecessaryFieldsToClient(WaiterModel.Client newClient, JPanel dialogPanel,
                                             JTextArea messagesArea, JPanel forButtonPanel) {
@@ -260,10 +284,16 @@ public class WaiterView {
     }
 
     public void informAboutReadyOrder(Order order) {
+        String clientName = order.getClientName();
+        controller.sendMessage(new Message(MessageType.TEXT, clientName, "Your order is ready!"));
+        WaiterModel.Client client = model.getClientByName(clientName);
+        JTextArea messagesArea = client.getMessagesArea();
+        messagesArea.insert("You: Your order is ready!\n", 0);
+
         JOptionPane.showMessageDialog(
                 frame,
-                "Order for " + order.getClientName() +
-                        " is ready. Get it from " + order.getCook(),
+                "Order for " + clientName + " is ready.\n" +
+                        "Get it from " + order.getCook(),
                 "Brutz",
                 JOptionPane.INFORMATION_MESSAGE);
     }
@@ -275,22 +305,21 @@ public class WaiterView {
         JPanel forButtonPanel = client.getButtonPanel();
         forButtonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.orange));
         forButtonPanel.setOpaque(false);
-        buttonsPanel.revalidate();
-        buttonsPanel.repaint();
+        updateButtonsPanel();
     }
 
-    public void informAboutEndMeal(String clientName) {
+    public void informAboutEndMeal(String clientName, double bill) {
         WaiterModel.Client client = model.getClientByName(clientName);
         JOptionPane.showMessageDialog(
                 frame,
-                "Client " + clientName + " is ready to pay.\nBill: " + client.getBill(),
+                String.format("Client %s is ready to pay.\n" +
+                        "Bill: %.2f", clientName, bill),
                 "Brutz",
                 JOptionPane.INFORMATION_MESSAGE);
         cardPanel.remove(client.getDialogPanel());
         cardPanel.revalidate();
         cardPanel.repaint();
         buttonsPanel.remove(client.getButtonPanel());
-        buttonsPanel.revalidate();
-        buttonsPanel.repaint();
+        updateButtonsPanel();
     }
 }

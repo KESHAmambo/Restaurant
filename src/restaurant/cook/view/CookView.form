@@ -21,7 +21,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="b56f3" class="javax.swing.JLabel" binding="currentOrderLable">
+          <component id="b56f3" class="javax.swing.JLabel" binding="currentOrderLabel">
             <constraints border-constraint="West"/>
             <properties>
               <font name="AR CENA" size="28"/>
