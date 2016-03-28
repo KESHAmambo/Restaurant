@@ -26,52 +26,51 @@ public class DishDescriptionPanel extends JPanel {
     }
 
     private JPanel createDescriptionPanel(Dish dish) {
-        JPanel descriptionPanel = new JPanel();
-        descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.PAGE_AXIS));
-        setPrefMaxMinSize(descriptionPanel, new Dimension(388, 100));
-        descriptionPanel.setOpaque(false);
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
+        setPrefMaxMinSize(resultPanel, new Dimension(388, 100));
+        resultPanel.setOpaque(false);
 
         JTextArea nameArea = createNameArea(dish);
         JTextArea shortInfoArea = createShortInfoArea(dish);
-        descriptionPanel.add(nameArea);
-        descriptionPanel.add(shortInfoArea);
-        return descriptionPanel;
+        resultPanel.add(nameArea);
+        resultPanel.add(shortInfoArea);
+        return resultPanel;
     }
 
     private JLabel createPriceLabel(double price) {
-        JLabel priceLabel = new JLabel();
-//        priceLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        setPrefMaxMinSize(priceLabel, new Dimension(70, 100));
-        priceLabel.setText("$" + price);
-        priceLabel.setForeground(Color.decode("0xAFAFAF"));
-        priceLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 16));
-        return priceLabel;
+        JLabel resultLabel = new JLabel();
+        setPrefMaxMinSize(resultLabel, new Dimension(70, 100));
+        resultLabel.setText("$" + price);
+        resultLabel.setForeground(Color.decode("0xAFAFAF"));
+        resultLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 16));
+        return resultLabel;
     }
 
     private JTextArea createShortInfoArea(Dish dish) {
-        JTextArea shortInfoArea = new JTextArea(dish.getShortDescription());
-        shortInfoArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        shortInfoArea.setRows(2);
-        shortInfoArea.setLineWrap(true);
-        shortInfoArea.setWrapStyleWord(true);
-        shortInfoArea.setForeground(Color.decode("0xAFAFAF"));
-        shortInfoArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 12));
-        setPrefMaxMinSize(shortInfoArea, new Dimension(388, 64));
-        shortInfoArea.setOpaque(false);
-        shortInfoArea.setEditable(false);
-        return shortInfoArea;
+        JTextArea resultTextArea = new JTextArea(dish.getShortDescription());
+        resultTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        resultTextArea.setRows(2);
+        resultTextArea.setLineWrap(true);
+        resultTextArea.setWrapStyleWord(true);
+        resultTextArea.setForeground(Color.decode("0xAFAFAF"));
+        resultTextArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 12));
+        setPrefMaxMinSize(resultTextArea, new Dimension(388, 64));
+        resultTextArea.setOpaque(false);
+        resultTextArea.setEditable(false);
+        return resultTextArea;
     }
 
     private JTextArea createNameArea(Dish dish) {
-        JTextArea nameArea = new JTextArea(dish.getName());
-        nameArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        nameArea.setRows(1);
-        nameArea.setForeground(Color.decode("0xF0F0F0"));
-        nameArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 16));
-        setPrefMaxMinSize(nameArea, new Dimension(388, 36));
-        nameArea.setOpaque(false);
-        nameArea.setEditable(false);
-        return nameArea;
+        JTextArea resultTextArea = new JTextArea(dish.getName());
+        resultTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        resultTextArea.setRows(1);
+        resultTextArea.setForeground(Color.decode("0xF0F0F0"));
+        resultTextArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 16));
+        setPrefMaxMinSize(resultTextArea, new Dimension(388, 36));
+        resultTextArea.setOpaque(false);
+        resultTextArea.setEditable(false);
+        return resultTextArea;
     }
 
     private static void setPrefMaxMinSize(Component component, Dimension dimension) {

@@ -76,5 +76,15 @@ public class WaiterModel {
         public String getName() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return "Client{" +
+                    "name='" + name + '\'' +
+                    ", dialogPanel=" + dialogPanel +
+                    ", messagesArea=" + messagesArea +
+                    ", buttonPanel=" + buttonPanel +
+                    '}';
+        }
     }
 }

@@ -231,10 +231,13 @@ public class ClientView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO
-                controller.sendMessage(new Message(MessageType.ORDER, model.getOrder()));
-                model.setFinalBill(model.getCurrentBill());
-                model.setOrderEmpty();
-                cleanCurrentOrderPanel();
+                Order orderToSend = model.getOrder();
+                if(orderToSend.getDishes().size() != 0) {
+                    controller.sendMessage(new Message(MessageType.ORDER, orderToSend));
+                    model.setFinalBill(model.getCurrentBill());
+                    model.setOrderEmpty();
+                    cleanCurrentOrderPanel();
+                }
             }
         };
     }

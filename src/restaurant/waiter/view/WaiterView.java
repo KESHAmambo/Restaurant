@@ -287,8 +287,10 @@ public class WaiterView {
         String clientName = order.getClientName();
         controller.sendMessage(new Message(MessageType.TEXT, clientName, "Your order is ready!"));
         WaiterModel.Client client = model.getClientByName(clientName);
-        JTextArea messagesArea = client.getMessagesArea();
-        messagesArea.insert("You: Your order is ready!\n", 0);
+        if(client != null) {
+            JTextArea messagesArea = client.getMessagesArea();
+            messagesArea.insert("You: Your order is ready!\n", 0);
+        }
 
         JOptionPane.showMessageDialog(
                 frame,
