@@ -8,8 +8,12 @@ import java.awt.*;
  */
 public class ImageButton extends JButton {
     protected Image image;
+    protected int width;
+    protected int height;
 
     public ImageButton(int width, int height, Image image){
+        this.width = width;
+        this.height = height;
         this.image = image;
         setProperties(width, height);
     }

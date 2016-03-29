@@ -8,10 +8,10 @@ import java.awt.*;
 /**
  * Created by Аркадий on 22.03.2016.
  */
-public class DishDescriptionPanel extends JPanel {
+public class ShortDishDescPanel extends JPanel {
     private final int HEIGHT = 100;
 
-    public DishDescriptionPanel(Dish dish, int width) {
+    public ShortDishDescPanel(Dish dish, int width) {
         setName(dish.getName());
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         setPrefMaxMinSize(this, new Dimension(width, HEIGHT));

@@ -69,7 +69,11 @@ public class ClientModel {
 
     public Menu getTestMenu() {
         Menu menu = new Menu();
-        Dish dish1 = new Dish("burgers", "EXTRA LONG BUTTERY CHEESEBURGER", null,
+        Dish dish1 = new Dish("burgers", "EXTRA LONG BUTTERY CHEESEBURGER",
+                "The Extra Long Buttery Cheeseburger features two beef patties " +
+                        "topped with freshly cut onions, crisp iceberg lettuce, ketchup, " +
+                        "melted American cheese, a buttery garlic flavored sauce and a " +
+                        "creamy mayonnaise spread, all served on a warm toasted hoagie bun.",
                 "The Extra Long Buttery Cheeseburger features two beef patties " +
                         "topped with freshly cut onions, crisp iceberg lettuce, ketchup",
                 null, 1.6);

@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by Аркадий on 21.03.2016.
+ * Created by пїЅпїЅпїЅпїЅпїЅпїЅпїЅ on 21.03.2016.
  */
 public class MyOrderAnimation implements Runnable {
     private final int ONE_STEP = 8;
@@ -34,15 +34,11 @@ public class MyOrderAnimation implements Runnable {
                     Dimension cardDim = cardPanel.getPreferredSize();
                     if (cardDim.getWidth() <= MIN_WIDTH) break;
                     cardDim.setSize(cardDim.getWidth() - ONE_STEP, MAX_HEIGHT);
-                    cardPanel.setPreferredSize(cardDim);
-                    cardPanel.setMaximumSize(cardDim);
-                    cardPanel.setMinimumSize(cardDim);
+                    setPrefMaxMinSize(cardPanel, cardDim);
 
                     Dimension myOrderDim = myOrderPanel.getPreferredSize();
                     myOrderDim.setSize(myOrderDim.getWidth() + ONE_STEP, MAX_HEIGHT);
-                    myOrderPanel.setPreferredSize(myOrderDim);
-                    myOrderPanel.setMaximumSize(myOrderDim);
-                    myOrderPanel.setMinimumSize(myOrderDim);
+                    setPrefMaxMinSize(myOrderPanel, myOrderDim);
 
                     boxPanel.revalidate();
                     boxPanel.repaint();
@@ -53,15 +49,11 @@ public class MyOrderAnimation implements Runnable {
                     Dimension cardDim = cardPanel.getPreferredSize();
                     if (cardDim.getWidth() >= MAX_WIDTH) break;
                     cardDim.setSize(cardDim.getWidth() + ONE_STEP, MAX_HEIGHT);
-                    cardPanel.setPreferredSize(cardDim);
-                    cardPanel.setMaximumSize(cardDim);
-                    cardPanel.setMinimumSize(cardDim);
+                    setPrefMaxMinSize(cardPanel, cardDim);
 
                     Dimension myOrderDim = myOrderPanel.getPreferredSize();
                     myOrderDim.setSize(myOrderDim.getWidth() - ONE_STEP, MAX_HEIGHT);
-                    myOrderPanel.setPreferredSize(myOrderDim);
-                    myOrderPanel.setMaximumSize(myOrderDim);
-                    myOrderPanel.setMinimumSize(myOrderDim);
+                    setPrefMaxMinSize(myOrderPanel, myOrderDim);
 
                     boxPanel.revalidate();
                     boxPanel.repaint();
@@ -72,5 +64,11 @@ public class MyOrderAnimation implements Runnable {
             e1.printStackTrace();
         }
         myOrderPanelSlideToLeft = !myOrderPanelSlideToLeft;
+    }
+
+    private void setPrefMaxMinSize(JComponent component, Dimension cardDim) {
+        component.setPreferredSize(cardDim);
+        component.setMaximumSize(cardDim);
+        component.setMinimumSize(cardDim);
     }
 }

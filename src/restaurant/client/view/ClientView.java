@@ -4,6 +4,7 @@ import restaurant.Message;
 import restaurant.MessageType;
 import restaurant.client.ClientController;
 import restaurant.client.ClientModel;
+import restaurant.client.view.animation.FullDescAnimation;
 import restaurant.client.view.customcomponents.*;
 import restaurant.client.view.animation.MyOrderAnimation;
 import restaurant.kitchen.*;
@@ -352,9 +353,11 @@ public class ClientView {
                 "src/restaurant/client/view/resources/typeimages/"
                         + typeButton.getName() + "Image.jpg").getImage());
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
+
         JPanel menuPanel = createMenuPanel(typeButton.getName());
         JScrollPane scrollPane = surroundComponentWithScrollPane(menuPanel);
         setPrefMaxMinSizes(scrollPane, new Dimension(MAX_BOX_WIDTH - 180, MAX_BOX_HEIGHT));
+
         resultPanel.add(Box.createRigidArea(new Dimension(180, 0)));
         resultPanel.add(scrollPane);
         return resultPanel;
@@ -364,23 +367,39 @@ public class ClientView {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         resultPanel.setBackground(Color.BLACK);
+
         Menu menu = model.getTestMenu(); //TODO
         List<Dish> dishes = menu.getDishesByType(typeName);
         for(final Dish dish: dishes) {
-            JPanel dishDescriptionPanel = new DishDescriptionPanel(dish, MAX_BOX_WIDTH - 180);
-
-            JButton plusButton = createPlusButton(dish);
-            JButton fullDescriptionButton = createFullDescriptionButton(dish);
-
-            dishDescriptionPanel.add(plusButton);
-            dishDescriptionPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-            dishDescriptionPanel.add(fullDescriptionButton);
-            dishDescriptionPanel.revalidate();
-            dishDescriptionPanel.repaint();
-
-            resultPanel.add(dishDescriptionPanel);
+            DishPanelForMenu dishPanelForMenu = createDishPanelForMenu(resultPanel, dish);
+            resultPanel.add(dishPanelForMenu);
         }
+
         setPrefMaxMinSizes(resultPanel, new Dimension(MAX_BOX_WIDTH - 180, dishes.size() * 100));
+        return resultPanel;
+    }
+
+    private DishPanelForMenu createDishPanelForMenu(JPanel menuPanel, Dish dish) {
+        DishPanelForMenu dishPanelForMenu = new DishPanelForMenu(dish);
+        ShortDishDescPanel shortDescPanel =
+                createShortDishDescPanel(menuPanel, dish, dishPanelForMenu);
+        dishPanelForMenu.collect(shortDescPanel);
+        return dishPanelForMenu;
+    }
+
+    private ShortDishDescPanel createShortDishDescPanel(
+            JPanel menuPanel, Dish dish, DishPanelForMenu dishPanelForMenu) {
+        ShortDishDescPanel resultPanel = new ShortDishDescPanel(
+                dish, MAX_BOX_WIDTH - 180);
+
+        JButton plusButton = createPlusButton(dish);
+        JButton fullDescButton = createFullDescButton(menuPanel, dishPanelForMenu);
+
+        resultPanel.add(plusButton);
+        resultPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        resultPanel.add(fullDescButton);
+        resultPanel.revalidate();
+        resultPanel.repaint();
         return resultPanel;
     }
 
@@ -414,7 +433,7 @@ public class ClientView {
     }
 
     private JPanel createNewDishPanelForCurrentOrder(Dish dish) {
-        JPanel dishDescriptionPanel = new DishDescriptionPanel(dish, MAX_BOX_WIDTH - 81);
+        JPanel dishDescriptionPanel = new ShortDishDescPanel(dish, MAX_BOX_WIDTH - 81);
 
         JLabel countLabel = createCountLabel();
         JButton plusButton = createPlusButton(dish);
@@ -533,18 +552,27 @@ public class ClientView {
         totalLabel.repaint();
     }
 
-    private JButton createFullDescriptionButton(Dish dish) {
-        JButton fullDescButton = new ImageButton(50, 50, new ImageIcon(
-                "src/restaurant/client/view/resources/controlbuttons/loupe.png").getImage());
-        fullDescButton.addActionListener(createListenerForFullDescriptionButton(dish));
+    private JButton createFullDescButton(
+            JPanel menuPanel, DishPanelForMenu dishPanelForMenu) {
+        JButton fullDescButton = new FullDescButton(50, 50,
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/loupe.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/bin.png").getImage());
+        fullDescButton.addActionListener(
+                createListenerForFullDescriptionButton(menuPanel, dishPanelForMenu));
         return fullDescButton;
     }
 
-    private ActionListener createListenerForFullDescriptionButton(Dish dish) {
+    private ActionListener createListenerForFullDescriptionButton(
+            final JPanel menuPanel, final DishPanelForMenu dishPanelForMenu) {
         return new ActionListener() {
+            FullDescAnimation animation = new FullDescAnimation(menuPanel, dishPanelForMenu);
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                new Thread(animation).start();
+                JButton button = (JButton) e.getSource();
+                button.setSelected(!button.isSelected());
+                button.repaint();
             }
         };
     }
@@ -683,7 +711,7 @@ public class ClientView {
 
     private void cleanCurrentOrderPanel() {
         for(Component component: currentOrderPanel.getComponents()) {
-            if(component instanceof DishDescriptionPanel) {
+            if(component instanceof ShortDishDescPanel) {
                 currentOrderPanel.remove(component);
             }
         }
