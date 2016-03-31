@@ -158,7 +158,7 @@ public class ClientView {
     }
 
     private void flickOffMyOrderPanel() {
-        if(!MyOrderAnimation.isMyOrderPanelSlideToLeft()) {
+        if(!MyOrderAnimation.isSlideToLeft()) {
             MyOrderAnimation myOrderAnimation = new MyOrderAnimation(
                     boxPanel, cardPanel, myOrderPanel);
             new Thread(myOrderAnimation).start();
@@ -231,7 +231,6 @@ public class ClientView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
                 Order orderToSend = model.getOrder();
                 if(orderToSend.getDishes().size() != 0) {
                     controller.sendMessage(new Message(MessageType.ORDER, orderToSend));
@@ -368,7 +367,7 @@ public class ClientView {
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         resultPanel.setBackground(Color.BLACK);
 
-        Menu menu = model.getTestMenu(); //TODO
+        Menu menu = model.getTestMenu(); //TODO change test menu to model menu
         List<Dish> dishes = menu.getDishesByType(typeName);
         for(final Dish dish: dishes) {
             DishPanelForMenu dishPanelForMenu = createDishPanelForMenu(resultPanel, dish);
@@ -509,7 +508,6 @@ public class ClientView {
                 model.getOrder().removeDish(dish);
                 model.setCurrentBill(model.getCurrentBill() - dish.getPrice());
                 updateTotalLabel();
-                //TODO
                 removeDishFromCurrentOrderPanel(dish);
             }
         };
@@ -591,17 +589,14 @@ public class ClientView {
     }
 
     private List<JButton> createTypeButtons() {
-        burgersButton = new TypeButton("burgers");
-        hotDogsButton = new TypeButton("hotDogs");
-        sandwichesButton = new TypeButton("sandwiches");
-        pastaButton = new TypeButton("pasta");
-        macButton = new TypeButton("mac");
-        sidesButton = new TypeButton("sides");
-        saladsButton = new TypeButton("salads");
-        coffeeButton = new TypeButton("coffee");
-        beveragesButton = new TypeButton("beverages");
-        sweetsButton = new TypeButton("sweets");
-        return combineButtonGroup();
+        List<JButton> resultList = new ArrayList<>();
+        //TODO: change test menu to menu from model
+        Set<String> dishTypes = new Menu().getStore().keySet();
+        for(String dishType: dishTypes) {
+            JButton button = new TypeButton(dishType);
+            resultList.add(button);
+        }
+        return resultList;
     }
 
     private void addListenersForTypeButtons(final List<JButton> typeButtons) {
@@ -633,16 +628,9 @@ public class ClientView {
     private JPanel createTypeButtonsPanel() {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
-        resultPanel.add(burgersButton);
-        resultPanel.add(hotDogsButton);
-        resultPanel.add(sandwichesButton);
-        resultPanel.add(pastaButton);
-        resultPanel.add(macButton);
-        resultPanel.add(sidesButton);
-        resultPanel.add(saladsButton);
-        resultPanel.add(coffeeButton);
-        resultPanel.add(beveragesButton);
-        resultPanel.add(sweetsButton);
+        for(JButton button: typeButtons) {
+            resultPanel.add(button);
+        }
         return resultPanel;
     }
 

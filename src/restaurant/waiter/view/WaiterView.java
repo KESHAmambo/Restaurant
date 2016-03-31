@@ -121,9 +121,11 @@ public class WaiterView {
     public void addNewClientDialog(WaiterModel.Client newClient) {
         String clientName = newClient.getName();
         JPanel dialogPanel = createPanelForDialogPanel();
+
         createNorthPartOfDialogPanel(clientName, dialogPanel);
         JTextArea messagesArea = createCenterPartOfDialogPanel(dialogPanel);
         createSouthPartOfDialogPanel(clientName, messagesArea, dialogPanel);
+
         cardPanel.add(dialogPanel, clientName);
         JPanel forButtonPanel = createPanelForChoosingDialog(clientName);
         addNecessaryFieldsToClient(newClient, dialogPanel, messagesArea, forButtonPanel);
@@ -286,6 +288,7 @@ public class WaiterView {
     public void informAboutReadyOrder(Order order) {
         String clientName = order.getClientName();
         controller.sendMessage(new Message(MessageType.TEXT, clientName, "Your order is ready!"));
+
         WaiterModel.Client client = model.getClientByName(clientName);
         if(client != null) {
             JTextArea messagesArea = client.getMessagesArea();

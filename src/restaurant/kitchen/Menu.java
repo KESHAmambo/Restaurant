@@ -1,26 +1,23 @@
 package restaurant.kitchen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Владелец on 16.03.2016.
  */
 public class Menu {
-    private Map<String, List<Dish>> store = new HashMap<>();
+    private Map<String, List<Dish>> store = new LinkedHashMap<>();
 
     public Menu() {
         store.put("burgers", new ArrayList<Dish>());
-        store.put("beverages", new ArrayList<Dish>());
-        store.put("coffee", new ArrayList<Dish>());
         store.put("hotDogs", new ArrayList<Dish>());
         store.put("mac", new ArrayList<Dish>());
         store.put("pasta", new ArrayList<Dish>());
         store.put("salads", new ArrayList<Dish>());
         store.put("sandwiches", new ArrayList<Dish>());
         store.put("sides", new ArrayList<Dish>());
+        store.put("beverages", new ArrayList<Dish>());
+        store.put("coffee", new ArrayList<Dish>());
         store.put("sweets", new ArrayList<Dish>());
     }
 

@@ -25,14 +25,14 @@ public class FullDescAnimation implements Runnable {
     @Override
     public void run() {
         try {
-            changeHeightTo();
+            openOrCloseDesc();
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
         openFullDesc = !openFullDesc;
     }
 
-    private void changeHeightTo() throws InterruptedException {
+    private void openOrCloseDesc() throws InterruptedException {
         while(true) {
             Dimension dishDim = dishPanel.getPreferredSize();
             if(openFullDesc) {
