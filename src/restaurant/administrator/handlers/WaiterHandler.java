@@ -1,9 +1,9 @@
-package restaurant.administator.handlers;
+package restaurant.administrator.handlers;
 
 import restaurant.Message;
 import restaurant.MessageType;
-import restaurant.administator.Connection;
-import restaurant.administator.Server;
+import restaurant.administrator.Connection;
+import restaurant.administrator.Server;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class WaiterHandler extends Handler {
     public void run() {
         try {
             requestActorName();
+            Server.updateConnectionsInfo("Waiter " + actorName + " was connected.");
             waiters.add(actorName);
             waitersLinksFromNameToConnection.put(actorName, connection);
             handlerMainLoop();

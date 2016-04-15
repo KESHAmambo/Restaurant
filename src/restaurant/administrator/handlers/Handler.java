@@ -1,9 +1,9 @@
-package restaurant.administator.handlers;
+package restaurant.administrator.handlers;
 
 import restaurant.Message;
 import restaurant.MessageType;
-import restaurant.administator.Connection;
-import restaurant.administator.Server;
+import restaurant.administrator.Connection;
+import restaurant.administrator.Server;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +29,6 @@ public abstract class Handler implements Runnable {
                     actorName = name;
                     actorsNames.add(actorName);
                     connection.send(new Message(MessageType.NAME_ACCEPTED));
-                    Server.showNewConnectionMessage(actorName + " was connected.");
                     break;
                 }
             }
@@ -40,10 +39,12 @@ public abstract class Handler implements Runnable {
             throws IOException, ClassNotFoundException, InterruptedException;
 
     protected void informServerAndCloseConnection(String actorType) {
-        Server.showWarningMessage(actorType + " " + actorName + " was disconnected!");
+        Server.updateConnectionsInfo(actorType + " " + actorName + " was disconnected!");
         Server.getActorsNames().remove(actorName);
         try {
             connection.close();
-        } catch (IOException ignore) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

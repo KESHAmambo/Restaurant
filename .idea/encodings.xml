@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/src/restaurant/waiter/WaiterController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/restaurant/waiter/WaiterModel.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/restaurant/waiter/view/WaiterView.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

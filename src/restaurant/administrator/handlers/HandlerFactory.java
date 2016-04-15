@@ -1,11 +1,7 @@
-package restaurant.administator.handlers;
+package restaurant.administrator.handlers;
 
 import restaurant.Message;
-import restaurant.administator.Connection;
-import restaurant.administator.Server;
-
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
+import restaurant.administrator.Connection;
 
 /**
  * Created by Аркадий on 13.03.2016.

@@ -1,6 +1,6 @@
 package restaurant;
 
-import restaurant.administator.Connection;
+import restaurant.administrator.Connection;
 
 import java.io.IOException;
 import java.net.Socket;

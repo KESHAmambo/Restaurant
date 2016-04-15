@@ -1,12 +1,15 @@
-package restaurant.administator.handlers;
+package restaurant.administrator.handlers;
 
 import restaurant.Message;
 import restaurant.MessageType;
-import restaurant.administator.Connection;
-import restaurant.administator.Server;
+import restaurant.administrator.Connection;
+import restaurant.administrator.Server;
+import restaurant.kitchen.Dish;
 import restaurant.kitchen.Order;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -21,6 +24,10 @@ public class ClientHandler extends Handler {
     private BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
     private BlockingQueue<String> waiters = Server.getWaiters();
 
+    private List<Dish> needImageDishes = Server.getNeedImageDishes();
+    private List<Dish> notNeedImageDishes = Server.getNotNeedImageDishes();
+    private List<Dish> statusChangedDishes = Server.getStatusChangedDishes();
+
     private String waiterName;
     private Connection waiterConnection;
     private String currentName;
@@ -34,6 +41,8 @@ public class ClientHandler extends Handler {
     public void run() {
         try {
             requestActorName();
+            Server.updateConnectionsInfo("Table " + actorName + " was connected.");
+            sendMenuChanges();
             handlerMainLoop();
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -42,7 +51,37 @@ public class ClientHandler extends Handler {
         }
     }
 
+    private void sendMenuChanges() throws IOException {
+        sendNumberOfDishes();
+        sendStatusChangedDishes();
+        sendNotNeedImageDishes();
+        sendNeedImageDishes();
+    }
 
+    private void sendNumberOfDishes() throws IOException {
+        int numberOfDishes = statusChangedDishes.size() +
+                notNeedImageDishes.size() + needImageDishes.size();
+        connection.send(new Message(MessageType.DISHES_NUMBER, numberOfDishes));
+    }
+
+    private void sendStatusChangedDishes() throws IOException {
+        for(Dish dish: statusChangedDishes) {
+            connection.send(new Message(MessageType.STATUS_CHANGED_DISH, dish));
+        }
+    }
+
+    private void sendNotNeedImageDishes() throws IOException {
+        for(Dish dish: notNeedImageDishes) {
+            connection.send(new Message(MessageType.DISH_WITHOUT_IMAGE, dish));
+        }
+    }
+
+    private void sendNeedImageDishes() throws IOException {
+        for(Dish dish: needImageDishes) {
+            connection.send(new Message(MessageType.DISH_WITH_IMAGE, dish));
+            connection.sendImage(dish.getImagePath());
+        }
+    }
 
     @Override
     protected void handlerMainLoop() throws IOException, ClassNotFoundException, InterruptedException {
@@ -58,14 +97,14 @@ public class ClientHandler extends Handler {
     private void workWithCurrentClient()
             throws IOException, ClassNotFoundException, InterruptedException {
         Message message = connection.receive();
-
         switch (message.getMessageType()) {
             case ORDER:
                 Order order = message.getOrder();
                 if (order != null) {
-                    order.setWaiter(waiterName);
+                    order.setReceivedTime(new Date());
+                    order.setWaiterName(waiterName);
+                    order.setTableNumber(Integer.parseInt(actorName));
                     waitingOrders.put(order);
-                    Server.addOrderToClientsStatisticsBase(order, actorName);
                 }
                 break;
             case TEXT:

@@ -1,7 +1,8 @@
-package restaurant.administator;
+package restaurant.administrator;
 
-import restaurant.administator.handlers.*;
+import restaurant.administrator.handlers.*;
 import restaurant.Message;
+import restaurant.kitchen.Dish;
 import restaurant.kitchen.Order;
 
 import java.io.IOException;
@@ -26,15 +27,26 @@ public class Server {
     private static Map<String, Connection> waitersLinksFromNameToConnection =
             Collections.synchronizedMap(new HashMap<String, Connection>());
 
+    private static AdminController controller;
+    private static List<Dish> needImageDishes;
+    private static List<Dish> notNeedImageDishes;
+    private static List<Dish> statusChangedDishes;
+
     private Server() {}
 
-    public static void main(String[] args) {
-        String address = ConsoleHelper.readString();
-        int serverPort = ConsoleHelper.readInt();
-        try(ServerSocket serverSocket = new ServerSocket(
-                serverPort, 50, InetAddress.getByName(address)))
-        {
-            ConsoleHelper.writeMessage("Server is started.");
+    public static void start(
+            AdminController controller, String address, int port,
+            List<Dish> needImageDishes, List<Dish> notNeedImageDishes,
+            List<Dish> statusChangedDishes)
+            throws IOException, ClassNotFoundException {
+        Server.controller = controller;
+        Server.needImageDishes = needImageDishes;
+        Server.notNeedImageDishes = notNeedImageDishes;
+        Server.statusChangedDishes = statusChangedDishes;
+
+        try(ServerSocket serverSocket =
+                    new ServerSocket(port, 100, InetAddress.getByName(address))) {
+            updateConnectionsInfo("Server is started.");
             Executor executor = Executors.newCachedThreadPool();
             while(true) {
                 try {
@@ -45,13 +57,23 @@ public class Server {
                     if(handler != null) {
                         executor.execute(handler);
                     }
-                } catch (IOException | ClassNotFoundException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    public static List<Dish> getNotNeedImageDishes() {
+        return notNeedImageDishes;
+    }
+
+    public static List<Dish> getStatusChangedDishes() {
+        return statusChangedDishes;
+    }
+
+    public static List<Dish> getNeedImageDishes() {
+        return needImageDishes;
     }
 
     public static BlockingQueue<Order> getWaitingOrders() {
@@ -74,21 +96,11 @@ public class Server {
         return actorsNames;
     }
 
-    public static void showWarningMessage(String s) {
-        ConsoleHelper.writeMessage(s);
-        //TODO
+    public static void writeOrderToDatabase(Order order) {
+        controller.writeOrderToDatabase(order);
     }
 
-    public static void addOrderToCooksStatisticsBase(Order order, String actorName) {
-        //TODO
-    }
-
-    public static void addOrderToClientsStatisticsBase(Order order, String actorName) {
-        //TODO
-    }
-
-    public static void showNewConnectionMessage(String s) {
-        ConsoleHelper.writeMessage(s);
-        //TODO
+    public static void updateConnectionsInfo(String s) {
+        controller.updateConnectionsInfo(s);
     }
 }

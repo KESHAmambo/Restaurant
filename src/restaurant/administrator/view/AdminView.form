@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="restaurant.administrator.view.AdminView">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <background color="-10837164"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <tabbedpane id="67cc8" binding="tabbedPane1" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="800" height="600"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-6503517"/>
+          <tabLayoutPolicy value="0"/>
+          <tabPlacement value="1"/>
+        </properties>
+        <border type="bevel-raised"/>
+        <children>
+          <grid id="2ce96" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Menu"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="77369" class="restaurant.administrator.view.customcomponents.MenuPanel" binding="menuPanel" custom-create="true">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <background color="-5119768"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="44215" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Add dish"/>
+            </constraints>
+            <properties>
+              <background color="-11670134"/>
+              <enabled value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="70004" class="restaurant.administrator.view.customcomponents.AddDishPanel" binding="addDishPanel" custom-create="true">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <background color="-11670134"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="d8eba" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Delete dish"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="c110d" class="restaurant.administrator.view.customcomponents.ChangeDishStatusPanel" binding="deleteDishPanel" custom-create="true">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <background color="-1221030"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="19f89" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Restore dish"/>
+            </constraints>
+            <properties>
+              <background color="-526090"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="8fa28" class="restaurant.administrator.view.customcomponents.ChangeDishStatusPanel" binding="restoreDishPanel" custom-create="true">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <background color="-461944"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="f2ad3" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Statistics"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="79094" class="restaurant.administrator.view.customcomponents.StatisticsPanel" binding="statisticsPanel" custom-create="true">
+                <constraints border-constraint="Center"/>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
+    </children>
+  </grid>
+</form>

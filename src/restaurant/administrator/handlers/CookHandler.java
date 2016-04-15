@@ -1,12 +1,13 @@
-package restaurant.administator.handlers;
+package restaurant.administrator.handlers;
 
 import restaurant.Message;
 import restaurant.MessageType;
-import restaurant.administator.Connection;
-import restaurant.administator.Server;
+import restaurant.administrator.Connection;
+import restaurant.administrator.Server;
 import restaurant.kitchen.Order;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ public class CookHandler extends Handler {
         cookingOrder = false;
         try {
             requestActorName();
+            Server.updateConnectionsInfo("Cook " + actorName + " was connected.");
             handlerMainLoop();
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -56,34 +58,42 @@ public class CookHandler extends Handler {
         if(message.getMessageType() == MessageType.ORDER_IS_READY) {
             Order order = message.getOrder();
             if(order != null) {
-                order.setCook(actorName);
-                try {
-                    String waiterName = order.getWaiter();
-                    Connection waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
-                    waiterConnection.send(message);
-                } catch (IOException | NullPointerException e) {
-                    sendToAnotherWaiter(message);
-                    e.printStackTrace();
-                }
-                cookingOrder = false;
-                Server.addOrderToCooksStatisticsBase(order, actorName);
+                processReadyOrder(message, order);
             }
         }
     }
 
-    private void sendToAnotherWaiter(Message message) throws InterruptedException {
+    private void processReadyOrder(Message message, Order order) throws InterruptedException {
+        try {
+            order.setReadyTime(new Date());
+            order.setCookName(actorName);
+            String waiterName = order.getWaiterName();
+            Connection waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
+            waiterConnection.send(message);
+
+            cookingOrder = false;
+            Server.writeOrderToDatabase(order);
+        } catch (IOException | NullPointerException e) {
+            sendToAnotherWaiter(message, order);
+            e.printStackTrace();
+        }
+    }
+
+    private void sendToAnotherWaiter(Message message, Order order) throws InterruptedException {
         while (true) {
             try {
                 String waiterName = waiters.take();
                 waiters.put(waiterName);
                 Connection waiterConnection = waitersLinksFromNameToConnection.get(waiterName);
                 waiterConnection.send(message);
+
+                order.setWaiterName(waiterName);
+                Server.writeOrderToDatabase(order);
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("RESENT TO ANOTHER WAITER");
     }
 
     private void waitForOrder() throws InterruptedException, IOException {
@@ -97,6 +107,7 @@ public class CookHandler extends Handler {
             }
         }
 
+        order.setStartedCookTime(new Date());
         Message message = new Message(MessageType.ORDER, order);
         try {
             connection.send(message);
