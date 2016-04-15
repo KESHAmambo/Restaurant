@@ -9,19 +9,20 @@ import java.io.Serializable;
 public class Dish implements Serializable {
     private String type;
     private String name;
-    private String fullDescription;
-    private String shortDescription;
+    private String fullDesc;
+    private String shortDesc;
     private String imagePath;
-    private double price = 0;
+    private double price;
+    private boolean deleted = false;
 
     //Constructors
 
-    public Dish(String type, String name, String fullDescription,
-                String shortDescription, String imagePath, double price) {
+    public Dish(String type, String name, String fullDesc,
+                String shortDesc, String imagePath, double price) {
         this.type = type;
         this.name = name;
-        this.fullDescription = fullDescription;
-        this.shortDescription = shortDescription;
+        this.fullDesc = fullDesc;
+        this.shortDesc = shortDesc;
         this.imagePath = imagePath;
         this.price = price;
     }
@@ -36,12 +37,12 @@ public class Dish implements Serializable {
         this.name = name;
     }
 
-    public void setFullDescription(String fullDescription) {
-        this.fullDescription = fullDescription;
+    public void setFullDesc(String fullDescription) {
+        this.fullDesc = fullDescription;
     }
 
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
+    public void setShortDesc(String shortDescription) {
+        this.shortDesc = shortDescription;
     }
 
     public void setImagePath(String imagePath) {
@@ -53,7 +54,7 @@ public class Dish implements Serializable {
     }
 
     //Getters
-
+w
     public String getType() {
         return type;
     }
@@ -62,12 +63,12 @@ public class Dish implements Serializable {
         return name;
     }
 
-    public String getFullDescription() {
-        return fullDescription;
+    public String getFullDesc() {
+        return fullDesc;
     }
 
-    public String getShortDescription() {
-        return shortDescription;
+    public String getShortDesc() {
+        return shortDesc;
     }
 
     public String getImagePath() {
@@ -78,4 +79,38 @@ public class Dish implements Serializable {
         return price;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Dish dish = (Dish) o;
+
+        if (type != null ? !type.equals(dish.type) : dish.type != null) return false;
+        return name != null ? name.equals(dish.name) : dish.name == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Dish{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }
