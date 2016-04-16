@@ -16,5 +16,9 @@ public enum MessageType {
     END_MEAL,
     TEXT,
     PING,
+    DISHES_NUMBER,
+    STATUS_CHANGED_DISH,
+    DISH_WITHOUT_IMAGE,
+    DISH_WITH_IMAGE,
     WARNING;
 }

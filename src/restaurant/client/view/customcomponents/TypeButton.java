@@ -9,15 +9,17 @@ import java.awt.*;
  * Created by Аркадий on 20.03.2016.
  */
 public class TypeButton extends ImageButton {
+    private static final int WIDTH = 255;
+    private static final int HEIGHT = 55;
     private Image imageOn;
 
     public TypeButton(String typeName) {
-        super(typeName);
+        setName(typeName);
         image = new ImageIcon(
                 "src/restaurant/client/view/resources/typebuttons/" + typeName + ".jpg").getImage();
         imageOn = new ImageIcon(
                 "src/restaurant/client/view/resources/typebuttons/" + typeName + "On.jpg").getImage();
-        setProperties(255, 55);
+        setProperties(WIDTH, HEIGHT);
     }
 
     @Override

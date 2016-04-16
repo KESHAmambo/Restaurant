@@ -115,7 +115,7 @@ public class WaiterView {
                 frame,
                 "Enter your name:",
                 "Brutz",
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.QUESTION_MESSAGE).trim();
     }
 
     public void addNewClientDialog(WaiterModel.Client newClient) {
@@ -298,7 +298,7 @@ public class WaiterView {
         JOptionPane.showMessageDialog(
                 frame,
                 "Order for " + clientName + " is ready.\n" +
-                        "Get it from " + order.getCook(),
+                        "Get it from " + order.getCookName(),
                 "Brutz",
                 JOptionPane.INFORMATION_MESSAGE);
     }
@@ -318,7 +318,7 @@ public class WaiterView {
         JOptionPane.showMessageDialog(
                 frame,
                 String.format("Client %s is ready to pay.\n" +
-                        "Bill: %.2f", clientName, bill),
+                        "Bill: $%.2f", clientName, bill),
                 "Brutz",
                 JOptionPane.INFORMATION_MESSAGE);
         cardPanel.remove(client.getDialogPanel());

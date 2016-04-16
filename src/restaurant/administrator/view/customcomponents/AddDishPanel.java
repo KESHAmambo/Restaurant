@@ -14,7 +14,7 @@ import java.util.List;
 import static restaurant.SwingHelper.*;
 
 /**
- * Created by Eduard on 03.04.2016.
+ * Created by Аркадий on 01.04.2016.
  */
 public class AddDishPanel extends JPanel {
     private final int MAX_WIDTH = 800;

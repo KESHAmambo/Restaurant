@@ -11,16 +11,13 @@ public class ImageButton extends JButton {
     protected int width;
     protected int height;
 
+    public ImageButton() {}
+
     public ImageButton(int width, int height, Image image){
         this.width = width;
         this.height = height;
         this.image = image;
         setProperties(width, height);
-    }
-
-    public ImageButton(String text) {
-        super(text);
-        setName(text);
     }
 
     protected void setProperties(int width, int height) {

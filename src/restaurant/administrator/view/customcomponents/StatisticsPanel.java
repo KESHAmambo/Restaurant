@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import static restaurant.SwingHelper.*;
 
 /**
- * Created by Eduard on 07.04.2016.
+ * Created by Аркадий on 09.04.2016.
  */
 public class StatisticsPanel extends JPanel {
     private final JTextArea textArea;

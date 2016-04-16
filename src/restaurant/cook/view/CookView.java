@@ -125,7 +125,7 @@ public class CookView {
                 frame,
                 "Enter your name:",
                 "Brutz",
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.QUESTION_MESSAGE).trim();
     }
 
     public void notifyConnectionStatusChanged(boolean actorConnected) {

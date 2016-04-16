@@ -54,7 +54,7 @@ public class Dish implements Serializable {
     }
 
     //Getters
-w
+
     public String getType() {
         return type;
     }
@@ -96,7 +96,6 @@ w
 
         if (type != null ? !type.equals(dish.type) : dish.type != null) return false;
         return name != null ? name.equals(dish.name) : dish.name == null;
-
     }
 
     @Override

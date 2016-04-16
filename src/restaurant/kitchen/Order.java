@@ -8,17 +8,52 @@ import java.util.*;
  */
 public class Order implements Serializable {
     private ArrayList<Dish> dishes = new ArrayList<>();
-    private int tableNumber;
-    private String waiter;
-    private String cook;
+    private String waiterName;
+    private String cookName;
     private String clientName;
+    private int tableNumber;
+    private Date receivedTime;
+    private Date startedCookTime;
+    private Date readyTime;
 
-    public String getWaiter() {
-        return waiter;
+    public long getReceivedTime() {
+        return receivedTime.getTime();
     }
 
-    public void setWaiter(String waiter) {
-        this.waiter = waiter;
+    public void setReceivedTime(Date receivedTime) {
+        this.receivedTime = receivedTime;
+    }
+
+    public long getStartedCookTime() {
+        return startedCookTime.getTime();
+    }
+
+    public void setStartedCookTime(Date startedCookTime) {
+        this.startedCookTime = startedCookTime;
+    }
+
+    public long getReadyTime() {
+        return readyTime.getTime();
+    }
+
+    public void setReadyTime(Date readyTime) {
+        this.readyTime = readyTime;
+    }
+
+    public int getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
+    public String getWaiterName() {
+        return waiterName;
+    }
+
+    public void setWaiterName(String waiterName) {
+        this.waiterName = waiterName;
     }
 
     public String getClientName() {
@@ -34,16 +69,12 @@ public class Order implements Serializable {
         return dishes;
     }
 
-    public int getTableNumber() {
-        return tableNumber;
+    public String getCookName() {
+        return cookName;
     }
 
-    public String getCook() {
-        return cook;
-    }
-
-    public void setCook(String cook) {
-        this.cook = cook;
+    public void setCookName(String cookName) {
+        this.cookName = cookName;
     }
 
     public void addDish(Dish dish) {
@@ -74,5 +105,17 @@ public class Order implements Serializable {
             }
         }
         return resultMap;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "waiterName='" + waiterName + '\'' +
+                ", cookName='" + cookName + '\'' +
+                ", clientName='" + clientName + '\'' +
+                ", receivedTime=" + receivedTime +
+                ", startedCookTime=" + startedCookTime +
+                ", readyTime=" + readyTime +
+                '}';
     }
 }

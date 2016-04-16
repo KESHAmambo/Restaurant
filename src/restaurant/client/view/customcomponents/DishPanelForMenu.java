@@ -21,6 +21,7 @@ public class DishPanelForMenu extends JPanel {
 
     public void collect(ShortDishDescPanel shortDescriptionPanel) {
         JPanel fullDescriptionPanel = createFullDescriptionPanel(dish);
+
         add(shortDescriptionPanel);
         add(fullDescriptionPanel);
         revalidate();
@@ -28,7 +29,9 @@ public class DishPanelForMenu extends JPanel {
     }
 
     private JPanel createFullDescriptionPanel(Dish dish) {
-        JPanel resultPanel = new JPanel();
+        JPanel resultPanel = new ImagePanel(
+                new ImageIcon(dish.getImagePath()).getImage(),
+                WIDTH - 290, 0);
         resultPanel.setName("fullDescriptionPanel");
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
         resultPanel.setBackground(Color.decode("0x242424"));
@@ -42,7 +45,7 @@ public class DishPanelForMenu extends JPanel {
     }
 
     private JTextArea createDescriptionTextArea(Dish dish) {
-        JTextArea resultTextArea = new JTextArea(dish.getFullDescription());
+        JTextArea resultTextArea = new JTextArea(dish.getFullDesc());
         setPrefMaxMinSize(resultTextArea, new Dimension(WIDTH / 2, 200));
         resultTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         resultTextArea.setOpaque(false);

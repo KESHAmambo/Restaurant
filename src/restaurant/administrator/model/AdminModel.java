@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Created by Аркадий on 31.03.2016.
+ */
 public class AdminModel {
     private final String MENU_PATH = "src/restaurant/administrator/menu.txt";
 

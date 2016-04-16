@@ -7,6 +7,9 @@ import restaurant.kitchen.Order;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+/**
+ * Created by Аркадий on 31.03.2016.
+ */
 public class AdminController {
     private AdminModel model = new AdminModel();
     private AdminView view = new AdminView(this, model);

@@ -12,6 +12,9 @@ import java.util.List;
 
 import static restaurant.SwingHelper.setPrefMaxMinSizes;
 
+/**
+ * Created by Аркадий on 01.04.2016.
+ */
 public class MenuPanel extends JPanel {
     private JTextArea menuTextArea;
     private JTextArea connectionsTextArea;

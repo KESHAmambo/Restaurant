@@ -7,6 +7,6 @@ import restaurant.client.ClientModel;
  */
 public class TestView {
     public static void main(String[] args) {
-        new ClientView(null, new ClientModel()).initView();
+        new ClientView(null, new ClientModel(null)).initView();
     }
 }

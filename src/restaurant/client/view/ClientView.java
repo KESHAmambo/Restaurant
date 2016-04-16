@@ -14,7 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class ClientView {
     private JPanel saverPanel;
 
     private JLabel totalLabel;
-    private NotificationButton myOrderButton;
+    private JButton myOrderButton;
     private NotificationButton assistanceButton;
     private JButton payButton;
     private JButton sendToKitchenButton;
@@ -70,6 +69,8 @@ public class ClientView {
     private JTextArea messagesTextArea;
     private JButton sendMessageButton;
 
+    private List<JPanel> menuPanels;
+
     public ClientView(ClientController controller, ClientModel model) {
         this.controller = controller;
         this.model = model;
@@ -79,7 +80,7 @@ public class ClientView {
         frame = new JFrame("Brutz");
         frame.setResizable(false);
         frame.setContentPane(this.mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -162,7 +163,7 @@ public class ClientView {
             MyOrderAnimation myOrderAnimation = new MyOrderAnimation(
                     boxPanel, cardPanel, myOrderPanel);
             new Thread(myOrderAnimation).start();
-            myOrderButton.setNotificationOn(false);
+//            myOrderButton.setNotificationOn(false);
         }
     }
 
@@ -220,17 +221,18 @@ public class ClientView {
     }
 
     private JButton createSendToKitchenButton() {
-        JButton resultButton = new ImageButton(200, 40, new ImageIcon(
-                "src/restaurant/client/view/resources/controlbuttons/" +
-                        "sendToKitchen.png").getImage());
-        resultButton.addActionListener(createListenerForSendToKitchenButton());
+        AnimateButton resultButton = new AnimateButton(200, 40,
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/sendToKitchen.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/smallSendToKitchen.png").getImage());
+        resultButton.addActionListener(createListenerForSendToKitchenButton(resultButton));
         return resultButton;
     }
 
-    private ActionListener createListenerForSendToKitchenButton() {
+    private ActionListener createListenerForSendToKitchenButton(final AnimateButton sendToKitchenButton) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                sendToKitchenButton.startAnimation();
                 Order orderToSend = model.getOrder();
                 if(orderToSend.getDishes().size() != 0) {
                     controller.sendMessage(new Message(MessageType.ORDER, orderToSend));
@@ -259,8 +261,9 @@ public class ClientView {
     }
 
     private JPanel createSaverPanel() {
-        JPanel resultPanel = new ImagePanel(new ImageIcon(
-                "src/restaurant/client/view/resources/panels/saver.jpg").getImage());
+        JPanel resultPanel = new ImagePanel(
+                new ImageIcon("src/restaurant/client/view/resources/panels/saver.jpg").getImage(),
+                0, 0);
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
 
         JPanel dialogPanel = createDialogPanel();
@@ -348,9 +351,10 @@ public class ClientView {
     }
 
     private JPanel createTypePanel(JButton typeButton) {
-        JPanel resultPanel = new ImagePanel(new ImageIcon(
-                "src/restaurant/client/view/resources/typeimages/"
-                        + typeButton.getName() + "Image.jpg").getImage());
+        JPanel resultPanel = new ImagePanel(
+                new ImageIcon("src/restaurant/client/view/resources/typeimages/"
+                        + typeButton.getName() + "Image.jpg").getImage(),
+                0, 0);
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
 
         JPanel menuPanel = createMenuPanel(typeButton.getName());
@@ -366,16 +370,31 @@ public class ClientView {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         resultPanel.setBackground(Color.BLACK);
+        resultPanel.setName(typeName);
 
-        Menu menu = model.getTestMenu(); //TODO change test menu to model menu
-        List<Dish> dishes = menu.getDishesByType(typeName);
-        for(final Dish dish: dishes) {
-            DishPanelForMenu dishPanelForMenu = createDishPanelForMenu(resultPanel, dish);
-            resultPanel.add(dishPanelForMenu);
+        if(menuPanels == null) {
+            menuPanels = new ArrayList<>();
         }
+        menuPanels.add(resultPanel);
 
-        setPrefMaxMinSizes(resultPanel, new Dimension(MAX_BOX_WIDTH - 180, dishes.size() * 100));
         return resultPanel;
+    }
+
+    public void updateMenuPanels() {
+        Menu menu = model.getMenu();
+        for(JPanel panel: menuPanels) {
+            List<Dish> dishes = menu.getDishesByType(panel.getName());
+            for (final Dish dish : dishes) {
+                if (!dish.isDeleted()) {
+                    DishPanelForMenu dishPanelForMenu = createDishPanelForMenu(panel, dish);
+                    panel.add(dishPanelForMenu);
+                }
+            }
+
+            setPrefMaxMinSizes(panel, new Dimension(MAX_BOX_WIDTH - 180, dishes.size() * 100));
+            panel.revalidate();
+            panel.repaint();
+        }
     }
 
     private DishPanelForMenu createDishPanelForMenu(JPanel menuPanel, Dish dish) {
@@ -403,21 +422,24 @@ public class ClientView {
     }
 
     private JButton createPlusButton(Dish dish) {
-        JButton plusButton = new ImageButton(50, 50, new ImageIcon(
-                "src/restaurant/client/view/resources/controlbuttons/plus.png").getImage());
-        plusButton.addActionListener(createListenerForPlusButton(dish));
+        AnimateButton plusButton = new AnimateButton(50, 50,
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/plus.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/smallPlus.png").getImage()
+        );
+        plusButton.addActionListener(createListenerForPlusButton(plusButton, dish));
         return plusButton;
     }
 
-    private ActionListener createListenerForPlusButton(final Dish dish) {
+    private ActionListener createListenerForPlusButton(final AnimateButton plusButton, final Dish dish) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                plusButton.startAnimation();
                 model.addDishToOrder(dish);
                 model.setCurrentBill(model.getCurrentBill() + dish.getPrice());
                 updateTotalLabel();
                 addNewDishToCurrentOrderPanel(dish);
-                myOrderButton.setNotificationOn(true);
+//                myOrderButton.setNotificationOn(true);
             }
         };
     }
@@ -495,16 +517,18 @@ public class ClientView {
     }
 
     private JButton createBinButton(Dish dish) {
-        JButton binButton = new ImageButton(50, 50, new ImageIcon(
-                "src/restaurant/client/view/resources/controlbuttons/bin.png").getImage());
-        binButton.addActionListener(createListenerForBinButton(dish));
+        AnimateButton binButton = new AnimateButton(50, 50,
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/bin.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/smallBin.png").getImage());
+        binButton.addActionListener(createListenerForBinButton(binButton, dish));
         return binButton;
     }
 
-    private ActionListener createListenerForBinButton(final Dish dish) {
+    private ActionListener createListenerForBinButton(final AnimateButton binButton, final Dish dish) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                binButton.startAnimation();
                 model.getOrder().removeDish(dish);
                 model.setCurrentBill(model.getCurrentBill() - dish.getPrice());
                 updateTotalLabel();
@@ -553,14 +577,14 @@ public class ClientView {
     private JButton createFullDescButton(
             JPanel menuPanel, DishPanelForMenu dishPanelForMenu) {
         JButton fullDescButton = new FullDescButton(50, 50,
-                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/loupe.png").getImage(),
-                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/bin.png").getImage());
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/fullDescClosed.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/arrow.png").getImage());
         fullDescButton.addActionListener(
-                createListenerForFullDescriptionButton(menuPanel, dishPanelForMenu));
+                createListenerForFullDescButton(menuPanel, dishPanelForMenu));
         return fullDescButton;
     }
 
-    private ActionListener createListenerForFullDescriptionButton(
+    private ActionListener createListenerForFullDescButton(
             final JPanel menuPanel, final DishPanelForMenu dishPanelForMenu) {
         return new ActionListener() {
             FullDescAnimation animation = new FullDescAnimation(menuPanel, dishPanelForMenu);
@@ -590,7 +614,6 @@ public class ClientView {
 
     private List<JButton> createTypeButtons() {
         List<JButton> resultList = new ArrayList<>();
-        //TODO: change test menu to menu from model
         Set<String> dishTypes = new Menu().getStore().keySet();
         for(String dishType: dishTypes) {
             JButton button = new TypeButton(dishType);
@@ -650,8 +673,9 @@ public class ClientView {
     }
 
     private JPanel createSouthPanel() {
-        JPanel resultPanel = new ImagePanel(new ImageIcon(
-                "src/restaurant/client/view/resources/panels/southPanel.jpg").getImage());
+        JPanel resultPanel = new ImagePanel(
+                new ImageIcon("src/restaurant/client/view/resources/panels/southPanel.jpg").getImage(),
+                0, 0);
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
         assistanceButton = createAssistanceButton();
         payButton = createPayButton();
@@ -677,7 +701,7 @@ public class ClientView {
                         MessageType.END_MEAL, model.getCurrentClientName(), model.getFinalBill()));
                 showNotifyWindow(frame,
                         String.format("Waiter will come to you in a minute.\n" +
-                        "Your bill: %.2f\nThank you! Come again!", model.getFinalBill()),
+                        "Your bill: $%.2f\nThank you! Come again!", model.getFinalBill()),
                         JOptionPane.INFORMATION_MESSAGE);
                 removeDataOfPayingClient();
 
@@ -686,7 +710,7 @@ public class ClientView {
             }
 
             private void removeDataOfPayingClient() {
-                myOrderButton.setNotificationOn(false);
+//                myOrderButton.setNotificationOn(false);
                 showSaverPanel();
                 model.setCurrentBill(0);
                 model.setFinalBill(0);
@@ -706,20 +730,18 @@ public class ClientView {
         resizeAndRepaintCurrentOrderPanel(true);
     }
 
-    private void showNotifyWindow(JFrame frame, String message, int informationMessage) {
+    private void showNotifyWindow(JFrame frame, String text, int informationMessage) {
         JOptionPane.showMessageDialog(
                 frame,
-                message,
+                text,
                 "Brutz",
                 informationMessage);
     }
 
     private NotificationButton createAssistanceButton() {
         NotificationButton resultButton = new NotificationButton(133, 50,
-                new ImageIcon(
-                        "src/restaurant/client/view/resources/controlbuttons/assistance.jpg").getImage(),
-                new ImageIcon(
-                        "src/restaurant/client/view/resources/controlbuttons/assistanceOn.jpg").getImage());
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/assistance.jpg").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/assistanceOn.jpg").getImage());
         resultButton.addActionListener(createListenerForAssistanceButton());
         return resultButton;
     }
@@ -762,24 +784,23 @@ public class ClientView {
         return resultLabel;
     }
 
-    private NotificationButton createMyOrderButton() {
-        NotificationButton resultButton = new NotificationButton(200, 40,
-                new ImageIcon(
-                        "src/restaurant/client/view/resources/controlbuttons/myOrder.png").getImage(),
-                new ImageIcon(
-                        "src/restaurant/client/view/resources/controlbuttons/myOrderOn.png").getImage());
-        resultButton.addActionListener(createListenerForMyOrderButton());
+    private AnimateButton createMyOrderButton() {
+        AnimateButton resultButton = new AnimateButton(200, 40,
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/myOrder.png").getImage(),
+                new ImageIcon("src/restaurant/client/view/resources/controlbuttons/smallMyOrder.png").getImage());
+        resultButton.addActionListener(createListenerForMyOrderButton(resultButton));
         return resultButton;
     }
 
-    private ActionListener createListenerForMyOrderButton() {
+    private ActionListener createListenerForMyOrderButton(final AnimateButton myOrderButton) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                myOrderButton.startAnimation();
                 MyOrderAnimation myOrderAnimation = new MyOrderAnimation(
                         boxPanel, cardPanel, myOrderPanel);
                 new Thread(myOrderAnimation).start();
-                myOrderButton.setNotificationOn(false);
+//                myOrderButton.setNotificationOn(false);
             }
         };
     }
@@ -796,7 +817,7 @@ public class ClientView {
             showNotifyWindow(frame, "Connection to the server is established.", JOptionPane.INFORMATION_MESSAGE);
         } else {
             showNotifyWindow(frame, "Client isn't connected to the server!", JOptionPane.ERROR_MESSAGE);
-            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+            System.exit(0);
         }
     }
 
@@ -833,7 +854,7 @@ public class ClientView {
             try {
                 int tableNumber = Integer.parseInt(port.trim());
                 model.setTableNumber(tableNumber);
-                return "Table " + tableNumber;
+                return "" + tableNumber;
             }catch (Exception e) {
                 showNotifyWindow(frame, "Incorrect table number was entered, try again.", JOptionPane.ERROR_MESSAGE);
             }

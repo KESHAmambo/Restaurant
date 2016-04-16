@@ -48,7 +48,7 @@ public class ShortDishDescPanel extends JPanel {
     }
 
     private JTextArea createShortInfoArea(Dish dish) {
-        JTextArea resultTextArea = new JTextArea(dish.getShortDescription());
+        JTextArea resultTextArea = new JTextArea(dish.getShortDesc());
         resultTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         resultTextArea.setRows(2);
         resultTextArea.setLineWrap(true);

@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 
 import static restaurant.SwingHelper.*;
 
+/**
+ * Created by Аркадий on 01.04.2016.
+ */
 public class ChangeDishStatusPanel extends JPanel {
     private JButton changeButton;
     private JTextField textField;

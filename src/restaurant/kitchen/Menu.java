@@ -64,11 +64,11 @@ public class Menu implements Serializable, Cloneable {
     }
 
     public Dish getDishByTypeAndName(String type, String name) {
-        for(Dish dish: store.get(type)) {
-            if(dish.getName().equals(name)) {
-                return dish;
+            for(Dish dish: store.get(type)) {
+                if(dish.getName().equals(name)) {
+                    return dish;
+                }
             }
-        }
         return null;
     }
 
