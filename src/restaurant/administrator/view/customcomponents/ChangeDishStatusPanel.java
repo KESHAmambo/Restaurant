@@ -1,12 +1,12 @@
 package restaurant.administrator.view.customcomponents;
 
-import restaurant.SwingHelper;
+import restaurant.kitchen.SwingHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static restaurant.SwingHelper.*;
+import static restaurant.kitchen.SwingHelper.*;
 
 /**
  * Created by Аркадий on 01.04.2016.

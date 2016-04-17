@@ -1,9 +1,9 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.MessageType;
-import restaurant.administrator.Connection;
-import restaurant.administrator.Server;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
+import restaurant.kitchen.Connection;
+import restaurant.administrator.controller.Server;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,6 +15,7 @@ public abstract class Handler implements Runnable {
     private static List<String> actorsNames = Server.getActorsNames();
     protected final Connection connection;
     protected String actorName;
+
     public Handler(Connection connection) {
         this.connection = connection;
     }

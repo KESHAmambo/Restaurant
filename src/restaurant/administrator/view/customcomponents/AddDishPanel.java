@@ -1,6 +1,6 @@
 package restaurant.administrator.view.customcomponents;
 
-import restaurant.SwingHelper;
+import restaurant.kitchen.SwingHelper;
 import restaurant.administrator.view.AdminView;
 import restaurant.client.view.customcomponents.ImagePanel;
 
@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static restaurant.SwingHelper.*;
+import static restaurant.kitchen.SwingHelper.*;
 
 /**
  * Created by Аркадий on 01.04.2016.

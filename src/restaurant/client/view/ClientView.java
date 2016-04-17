@@ -1,7 +1,7 @@
 package restaurant.client.view;
 
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.client.ClientController;
 import restaurant.client.ClientModel;
 import restaurant.client.view.animation.FullDescAnimation;
@@ -171,7 +171,7 @@ public class ClientView {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         currentOrderPanel = createCurrentOrderPanel();
-        JScrollPane scrollPane = surroundComponentWithScrollPane(currentOrderPanel);
+        JScrollPane scrollPane = surroundWithScrollPane(currentOrderPanel);
         setPrefMaxMinSizes(scrollPane, new Dimension(MAX_BOX_WIDTH - 81, MAX_BOX_HEIGHT - 50));
         toKitchenPanel = createToKitchenPanel();
 
@@ -281,7 +281,7 @@ public class ClientView {
         setPrefMaxMinSizes(resultPanel, new Dimension(500, 350));
 
         messagesTextArea = createMessagesTextArea();
-        JScrollPane scrollPane = surroundComponentWithScrollPane(messagesTextArea);
+        JScrollPane scrollPane = surroundWithScrollPane(messagesTextArea);
         setPrefMaxMinSizes(scrollPane, new Dimension(500, 200));
         JPanel panelForSendingMessages = createPanelForSendingMessages();
 
@@ -312,6 +312,7 @@ public class ClientView {
         resultField.setBackground(Color.decode("0x33383E"));
         resultField.setForeground(Color.decode("0xF0F0F0"));
         resultField.setFont(new Font("Comic Sans MS", Font.PLAIN, 12));
+        resultField.setCaretColor(Color.decode("0xF0F0F0"));
         setPrefMaxMinSizes(resultField, new Dimension(350, 30));
         return resultField;
     }
@@ -358,7 +359,7 @@ public class ClientView {
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));
 
         JPanel menuPanel = createMenuPanel(typeButton.getName());
-        JScrollPane scrollPane = surroundComponentWithScrollPane(menuPanel);
+        JScrollPane scrollPane = surroundWithScrollPane(menuPanel);
         setPrefMaxMinSizes(scrollPane, new Dimension(MAX_BOX_WIDTH - 180, MAX_BOX_HEIGHT));
 
         resultPanel.add(Box.createRigidArea(new Dimension(180, 0)));
@@ -599,7 +600,7 @@ public class ClientView {
         };
     }
 
-    private JScrollPane surroundComponentWithScrollPane(Component component) {
+    private JScrollPane surroundWithScrollPane(Component component) {
         JScrollPane scrollPane = new JScrollPane(component);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBackground(Color.BLACK);

@@ -1,7 +1,7 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.administrator.Connection;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.Connection;
 
 /**
  * Created by Аркадий on 13.03.2016.

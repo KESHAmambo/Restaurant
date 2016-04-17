@@ -1,8 +1,8 @@
 package restaurant.waiter;
 
-import restaurant.Actor;
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Actor;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.kitchen.Order;
 import restaurant.waiter.view.WaiterView;
 

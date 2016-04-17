@@ -4,7 +4,9 @@ import restaurant.kitchen.Dish;
 import restaurant.kitchen.Order;
 
 import java.sql.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Аркадий on 09.04.2016.
@@ -20,6 +22,12 @@ public class DatabaseManager {
     private final PreparedStatement allCooksSelectStmt;
     private final PreparedStatement allWaitersSelectStmt;
     private final PreparedStatement allTablesSelectStmt;
+    private final PreparedStatement incomeByDaySelectStmt;
+    private final PreparedStatement incomeByMonthSelectStmt;
+    private final PreparedStatement dishesByDaySelectStmt;
+    private final PreparedStatement dishesByMonthSelectStmt;
+    private final PreparedStatement ordersByDaySelectStmt;
+    private final PreparedStatement ordersByMonthSelectStmt;
     private Connection connection;
     private final Statement stmt;
     private PreparedStatement orderInsertStmt;
@@ -119,7 +127,7 @@ public class DatabaseManager {
                 "  trunc(sum(extract (hour from time_cooking) *60*60 + " +
                 "  extract (minute from time_cooking)*60 + " +
                 "  extract (second from time_cooking))/60, 0) " +
-                "from" +
+                "from " +
                 "  (select order_id, cook_name, " +
                 "      to_timestamp(to_char(ready, 'DD.MM.YYYY:HH24:MI:SS'), 'DD.MM.YYYY:HH24:MI:SS') - " +
                 "      to_timestamp(to_char(started_cook, 'DD.MM.YYYY:HH24:MI:SS'), 'DD.MM.YYYY:HH24:MI:SS') " +
@@ -163,13 +171,86 @@ public class DatabaseManager {
                 "and received > ? and received < ? " +
                 "group by table_id"
         );
+
+        // INCOME_BY_DAY queryType
+
+        incomeByDaySelectStmt = connection.prepareStatement(
+                "select trunc(received, 'DDD'), sum(bill) " +
+                "from " +
+                "  (select o1.order_id id, received, sum(d.price) bill " +
+                "    from orders o1, dishes d " +
+                "    where o1.order_id = d.order_id " +
+                "    and received > ? and received < ? " +
+                "    group by o1.order_id, received) " +
+                "group by trunc(received, 'DDD')"
+        );
+
+        // INCOME_BY_MONTH queryType
+
+        incomeByMonthSelectStmt = connection.prepareStatement(
+                "select trunc(received, 'MONTH'), sum(bill) " +
+                "from " +
+                "  (select o1.order_id id, received, sum(d.price) bill " +
+                "    from orders o1, dishes d " +
+                "    where o1.order_id = d.order_id " +
+                "    and received > ? and received < ? " +
+                "    group by o1.order_id, received) " +
+                "group by trunc(received, 'MONTH')"
+        );
+
+        // DISHES_BY_DAY queryType
+
+        dishesByDaySelectStmt = connection.prepareStatement(
+                "select trunc(received, 'DDD'), sum(dishes_number) " +
+                "from " +
+                "  (select o1.order_id id, received, count(*) dishes_number " +
+                "    from orders o1, dishes d " +
+                "    where o1.order_id = d.order_id " +
+                "    and received > ? and received < ? " +
+                "    group by o1.order_id, received) " +
+                "group by trunc(received, 'DDD')"
+        );
+
+        // DISHES_BY_MONTH queryType
+
+        dishesByMonthSelectStmt = connection.prepareStatement(
+                "select trunc(received, 'MONTH'), sum(dishes_number) " +
+                "from " +
+                "  (select o1.order_id id, received, count(*) dishes_number " +
+                "    from orders o1, dishes d " +
+                "    where o1.order_id = d.order_id " +
+                "    and received > ? and received < ? " +
+                "    group by o1.order_id, received) " +
+                "group by trunc(received, 'MONTH')"
+        );
+
+        // ORDERS_BY_DAY queryType
+
+        ordersByDaySelectStmt = connection.prepareStatement(
+                "select trunc(received, 'DDD'), count(*) " +
+                "from orders " +
+                "where received > ? and received < ? " +
+                "group by trunc(received, 'DDD')"
+        );
+
+        // ORDERS_BY_MONTH queryType
+
+        ordersByMonthSelectStmt = connection.prepareStatement(
+                "select trunc(received, 'MONTH'), count(*) " +
+                        "from orders " +
+                        "where received > ? and received < ? " +
+                        "group by trunc(received, 'MONTH')"
+        );
     }
 
     public void close() {
         close(stmt, orderInsertStmt, dishInsertStmt,
                 commonDishesSelectStmt, allDishesSelectStmt,
                 commonOrdersSelectStmt, allOrdersSelectStmt, orderDishesSelectStmt,
-                allCooksSelectStmt, allWaitersSelectStmt, allTablesSelectStmt);
+                allCooksSelectStmt, allWaitersSelectStmt, allTablesSelectStmt,
+                incomeByDaySelectStmt,incomeByMonthSelectStmt,
+                dishesByDaySelectStmt, dishesByMonthSelectStmt,
+                ordersByDaySelectStmt, ordersByMonthSelectStmt);
     }
 
     private void close(AutoCloseable... autoCloseables) {
@@ -212,8 +293,7 @@ public class DatabaseManager {
         }
     }
 
-    public String processQuery(QueryType queryType, String name, Date fromDate, Date toDate) {
-        //TODO
+    public String processQuery(QueryType queryType, Date fromDate, Date toDate) {
         switch(queryType) {
             case DISHES:
                 return processDishesQuery(fromDate, toDate);
@@ -334,7 +414,7 @@ public class DatabaseManager {
             commonRS.next();
             sb.append(String.format(
                     "%-20s%d\n%-20s%.2f\n%-20s%.2f\n%-20s%.2f sec\n%-20s%.2f sec\n%-20s%.2f sec\n\n",
-                    "Count", commonRS.getInt(1),
+                    "Count:", commonRS.getInt(1),
                     "Sum:" , commonRS.getDouble(2),
                     "Average bill:", commonRS.getDouble(3),
                     "Time waiting:", commonRS.getDouble(4),
@@ -418,5 +498,90 @@ public class DatabaseManager {
             close(commonRS, allDishesRS);
         }
         return ERROR_OCCURRED;
+    }
+
+    public TreeMap<Date, Double> processInfographicsQuery(QueryType queryType, Date fromDate, Date toDate) {
+        ResultSet infographicsRS = null;
+        TreeMap<Date, Double> resultMap = new TreeMap<>();
+        try {
+            infographicsRS = initInfographicsRS(queryType, fromDate, toDate);
+            while(infographicsRS.next()) {
+                resultMap.put(infographicsRS.getDate(1), infographicsRS.getDouble(2));
+            }
+            complementWithEmptyPeriods(resultMap, queryType, fromDate, toDate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(infographicsRS);
+        }
+        return resultMap;
+    }
+
+    private ResultSet initInfographicsRS(
+            QueryType queryType, Date fromDate, Date toDate)
+            throws SQLException {
+        switch(queryType) {
+            case INCOME_BY_DAY:
+                setDatesForStmt(incomeByDaySelectStmt, fromDate, toDate);
+                return incomeByDaySelectStmt.executeQuery();
+            case INCOME_BY_MONTH:
+                setDatesForStmt(incomeByMonthSelectStmt, fromDate, toDate);
+                return incomeByMonthSelectStmt.executeQuery();
+            case DISHES_BY_DAY:
+                setDatesForStmt(dishesByDaySelectStmt, fromDate, toDate);
+                return dishesByDaySelectStmt.executeQuery();
+            case DISHES_BY_MONTH:
+                setDatesForStmt(dishesByMonthSelectStmt, fromDate, toDate);
+                return dishesByMonthSelectStmt.executeQuery();
+            case ORDERS_BY_DAY:
+                setDatesForStmt(ordersByDaySelectStmt, fromDate, toDate);
+                return ordersByDaySelectStmt.executeQuery();
+            case ORDERS_BY_MONTH:
+                setDatesForStmt(ordersByMonthSelectStmt, fromDate, toDate);
+                return ordersByMonthSelectStmt.executeQuery();
+            default:
+                throw new SQLException("Invalid queryType");
+        }
+    }
+
+    private void setDatesForStmt(PreparedStatement stmt, Date fromDate, Date toDate) throws SQLException {
+        stmt.setDate(1, fromDate);
+        stmt.setDate(2, toDate);
+    }
+
+    private void complementWithEmptyPeriods(
+            TreeMap<Date, Double> resultMap, QueryType queryType,
+            Date fromDate, Date toDate) {
+        Calendar toCalendar = new GregorianCalendar();
+        toCalendar.setTime(toDate);
+        Calendar changingCalendar = new GregorianCalendar();
+        changingCalendar.setTime(fromDate);
+
+        switch (queryType) {
+            case ORDERS_BY_DAY:
+            case DISHES_BY_DAY:
+            case INCOME_BY_DAY:
+                addMissingPeriods(Calendar.DATE, resultMap,
+                        toCalendar, changingCalendar);
+                break;
+            case ORDERS_BY_MONTH:
+            case DISHES_BY_MONTH:
+            case INCOME_BY_MONTH:
+                changingCalendar.set(Calendar.DATE, 1);
+                addMissingPeriods(Calendar.MONTH, resultMap,
+                        toCalendar, changingCalendar);
+        }
+    }
+
+    private void addMissingPeriods(
+            int period, TreeMap<Date, Double> resultMap,
+            Calendar toCalendar, Calendar changingCalendar) {
+        while(changingCalendar.compareTo(toCalendar) < 0) {
+            Date date = new Date(changingCalendar.getTime().getTime());
+            if(!resultMap.containsKey(date)) {
+                resultMap.put(date, 0d);
+            }
+            changingCalendar.add(period, 1);
+        }
     }
 }

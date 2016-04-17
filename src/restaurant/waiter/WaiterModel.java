@@ -1,8 +1,5 @@
 package restaurant.waiter;
 
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Iterator;

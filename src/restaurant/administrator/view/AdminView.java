@@ -1,21 +1,17 @@
 package restaurant.administrator.view;
 
-import restaurant.administrator.AdminController;
+import restaurant.administrator.controller.AdminController;
 import restaurant.administrator.model.AdminModel;
 import restaurant.administrator.model.QueryType;
-import restaurant.administrator.view.customcomponents.AddDishPanel;
-import restaurant.administrator.view.customcomponents.ChangeDishStatusPanel;
-import restaurant.administrator.view.customcomponents.MenuPanel;
-import restaurant.administrator.view.customcomponents.StatisticsPanel;
+import restaurant.administrator.view.customcomponents.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+import java.util.TreeMap;
 
 /**
  * Created by Аркадий on 31.03.2016.
@@ -35,6 +31,7 @@ public class AdminView {
     private ChangeDishStatusPanel restoreDishPanel;
     private MenuPanel menuPanel;
     private StatisticsPanel statisticsPanel;
+    private InfographicsPanel infographicsPanel;
 
     public AdminView(AdminController controller, AdminModel model) {
         this.controller = controller;
@@ -67,6 +64,30 @@ public class AdminView {
         menuPanel = new MenuPanel(model.getNewMenu(),
                 createListenerForStartButton(), createListenerForExitButton());
         statisticsPanel = new StatisticsPanel(createListenerForQueryButton());
+        infographicsPanel = new InfographicsPanel(createListenerForInfographicsButton());
+    }
+
+    private ActionListener createListenerForInfographicsButton() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    QueryType queryType = infographicsPanel.getSelectedQueryType();
+                    Date fromDate = convertDate(infographicsPanel.getFromDateString());
+                    Date toDate = convertDate(infographicsPanel.getToDateString());
+
+                    TreeMap<java.sql.Date, Double> data = model.processInfographicsQuery(queryType, fromDate, toDate);
+
+                    if(!data.isEmpty()) {
+                        infographicsPanel.drawBarChart(data);
+                    } else {
+                        showWarningDialog("No statistics for specified period.");
+                    }
+                } catch (ParseException e1) {
+                    showWarningDialog("Invalid date format!");
+                }
+            }
+        };
     }
 
     private ActionListener createListenerForQueryButton() {
@@ -74,30 +95,23 @@ public class AdminView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    JComboBox<QueryType> queryBox = statisticsPanel.getQueryBox();
-                    JTextField nameField = statisticsPanel.getNameField();
-                    JTextField fromDateField = statisticsPanel.getFromDateField();
-                    JTextField toDateField = statisticsPanel.getToDateField();
+                    QueryType queryType = statisticsPanel.getSelectedQueryType();
+                    Date fromDate = convertDate(statisticsPanel.getFromDateString());
+                    Date toDate = convertDate(statisticsPanel.getToDateString());
 
-                    QueryType queryType = (QueryType) queryBox.getSelectedItem();
-                    String name = nameField.getText().trim();
-                    Date fromDate = convertDate(fromDateField.getText().trim());
-                    Date toDate = convertDate(toDateField.getText().trim());
-
-                    String resultText = model.processQuery(queryType, name, fromDate, toDate);
+                    String resultText = model.processQuery(queryType, fromDate, toDate);
                     statisticsPanel.updateText(resultText);
                 } catch (NumberFormatException e1) {
                     showWarningDialog("Invalid days number! Must be between 0 and 30000.");
                 } catch (ParseException e1) {
                     showWarningDialog("Invalid date format!");
                 }
-
-            }
-
-            private Date convertDate(String date) throws ParseException {
-                return dateFormat.parse(date);
             }
         };
+    }
+
+    private Date convertDate(String date) throws ParseException {
+        return dateFormat.parse(date);
     }
 
     private ActionListener createListenerForExitButton() {

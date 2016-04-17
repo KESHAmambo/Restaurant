@@ -6,10 +6,8 @@ import restaurant.kitchen.Order;
 
 import java.io.*;
 import java.sql.*;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 /**
  * Created by Аркадий on 31.03.2016.
@@ -57,6 +55,7 @@ public class AdminModel {
             fileIS.close();
             return menu;
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             return new Menu();
         }
     }
@@ -187,8 +186,13 @@ public class AdminModel {
         dbManager.close();
     }
 
-    public String processQuery(QueryType queryType, String name, java.util.Date fromDate, java.util.Date toDate) {
-        return dbManager.processQuery(queryType, name,
+    public String processQuery(QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
+        return dbManager.processQuery(queryType,
+                new Date(fromDate.getTime()), new Date(toDate.getTime()));
+    }
+
+    public TreeMap<Date, Double> processInfographicsQuery(QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
+        return dbManager.processInfographicsQuery(queryType,
                 new Date(fromDate.getTime()), new Date(toDate.getTime()));
     }
 }

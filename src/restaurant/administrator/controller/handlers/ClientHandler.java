@@ -1,9 +1,9 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.MessageType;
-import restaurant.administrator.Connection;
-import restaurant.administrator.Server;
+import restaurant.administrator.controller.Server;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
+import restaurant.kitchen.Connection;
 import restaurant.kitchen.Dish;
 import restaurant.kitchen.Order;
 

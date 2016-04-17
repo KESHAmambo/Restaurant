@@ -1,7 +1,7 @@
 package restaurant.cook.view;
 
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.cook.CookController;
 import restaurant.cook.CookModel;
 import restaurant.kitchen.Dish;

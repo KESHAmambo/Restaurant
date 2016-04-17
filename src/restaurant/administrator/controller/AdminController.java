@@ -1,4 +1,4 @@
-package restaurant.administrator;
+package restaurant.administrator.controller;
 
 import restaurant.administrator.model.AdminModel;
 import restaurant.administrator.view.AdminView;

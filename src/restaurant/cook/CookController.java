@@ -1,8 +1,8 @@
 package restaurant.cook;
 
-import restaurant.Actor;
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Actor;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.cook.view.CookView;
 import restaurant.kitchen.Order;
 

@@ -1,9 +1,9 @@
 package restaurant.client;
 
-import restaurant.Actor;
+import restaurant.kitchen.Actor;
 import restaurant.client.view.ClientView;
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.kitchen.Dish;
 
 import java.io.IOException;

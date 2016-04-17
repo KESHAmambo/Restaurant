@@ -1,7 +1,4 @@
-package restaurant;
-
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
+package restaurant.kitchen;
 
 import java.io.Serializable;
 
