@@ -61,36 +61,7 @@ public class AdminModel {
     }
 
     public boolean changeDishStatus(String dishName, boolean deleted) {
-        Dish dish = oldMenu.setDeletedAndGetDishByName(dishName, deleted);
-        if(dish != null) {
-            statusChangedDishes.remove(dish);
-            statusChangedDishes.add(dish);
-            return true;
-        } else {
-            return setDeletedInNewAddedDishes(dishName, deleted);
-        }
-    }
-
-    /**
-     * @param dishName
-     * @param deleted
-     * @return true if newDishes contained dish with dishName
-     * and deleted field was changed; false, if it didn't contain
-     * such dish.
-     */
-    private boolean setDeletedInNewAddedDishes(String dishName, boolean deleted) {
-        for(Dish dish: needImageDishes) {
-            if(dish.getName().equals(dishName)) {
-                dish.setDeleted(deleted);
-                return true;
-            }
-        }
-        for(Dish dish: notNeedImageDishes) {
-            if(dish.getName().equals(dishName)) {
-                dish.setDeleted(deleted);
-                return true;
-            }
-        }
+        //TODO
         return false;
     }
 
@@ -100,66 +71,12 @@ public class AdminModel {
      */
     public boolean addOrEditDish(
             String type, String name, String shortDesc,
-            String fullDesc, String imagePath, double price) {
-        Dish existedDish = oldMenu.getDishByTypeAndName(type, name);
-        if(existedDish != null) {
-            processExistedDish(existedDish, shortDesc, fullDesc, imagePath, price);
-            return false;
-        } else {
-            return processNewDish(type, name, shortDesc, fullDesc, imagePath, price);
-        }
+            String fullDesc, String imagePath, boolean needImage, double price) {
         //TODO
+        return false;
     }
 
-    /**
-     * @param type
-     * @param name
-     * @param shortDesc
-     * @param fullDesc
-     * @param imagePath
-     * @param price
-     * @return true if dish wasn't added earlier,
-     * false in another case
-     */
-    private boolean processNewDish(
-            String type, String name, String shortDesc,
-            String fullDesc, String imagePath, double price) {
-        Dish newDish = new Dish(type, name, fullDesc, shortDesc, imagePath, price);
-
-        boolean alreadyAdded = newMenu.removeDish(newDish);
-        if(alreadyAdded) {
-            notNeedImageDishes.remove(newDish);
-            needImageDishes.remove(newDish);
-        }
-
-        newMenu.addDish(newDish);
-        if("no image".equals(imagePath)) {
-            notNeedImageDishes.add(newDish);
-        } else {
-            needImageDishes.add(newDish);
-        }
-
-        return !alreadyAdded;
-    }
-
-    private void processExistedDish(Dish existedDish, String shortDesc, String fullDesc, String imagePath, double price) {
-        existedDish.setFullDesc(fullDesc);
-        existedDish.setShortDesc(shortDesc);
-        existedDish.setPrice(price);
-
-        if("no image".equals(imagePath)) {
-            notNeedImageDishes.add(existedDish);
-        } else {
-            existedDish.setImagePath(imagePath);
-            needImageDishes.add(existedDish);
-        }
-
-        newMenu.removeDish(existedDish);
-        newMenu.addDish(existedDish);
-    }
-
-    public void serializeNewMenu() {
-        updateOldDishesInNewMenu();
+    public void serializeMenu() {
         try {
             FileOutputStream fileOS = new FileOutputStream(MENU_PATH);
             ObjectOutputStream objectOS = new ObjectOutputStream(fileOS);
@@ -171,19 +88,8 @@ public class AdminModel {
         }
     }
 
-    private void updateOldDishesInNewMenu() {
-        for(Dish changedDish: statusChangedDishes) {
-            Dish dish = newMenu.getDishByTypeAndName(
-                    changedDish.getType(), changedDish.getName());
-            dish.setDeleted(changedDish.isDeleted());
-        }
-    }
     public void writeOrderToDatabase(Order order) {
         dbManager.write(order);
-    }
-
-    public void close() {
-        dbManager.close();
     }
 
     public String processQuery(QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
@@ -201,5 +107,9 @@ public class AdminModel {
             QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
         return dbManager.processPieInfopraphQuery(queryType,
                 new Date(fromDate.getTime()), new Date(toDate.getTime()));
+    }
+
+    public void close() {
+        dbManager.close();
     }
 }

@@ -20,7 +20,7 @@ public class AdminController {
     }
 
     public void startServer() {
-        model.serializeNewMenu();
+        model.serializeMenu();
 
         new Thread(new Runnable() {
             @Override

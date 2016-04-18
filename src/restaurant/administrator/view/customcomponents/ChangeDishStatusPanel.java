@@ -12,6 +12,7 @@ import static restaurant.kitchen.SwingHelper.*;
  * Created by Аркадий on 01.04.2016.
  */
 public class ChangeDishStatusPanel extends JPanel {
+    private JComboBox<String> typesBox;
     private JButton changeButton;
     private JTextField textField;
 
@@ -19,20 +20,41 @@ public class ChangeDishStatusPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         JLabel label = createLabel(labelText);
+        typesBox = createTypesBox();
         textField =  createTextField();
         changeButton = SwingHelper.createSimpleButton(
                 buttonText, buttonListener, new Dimension(200, 50));
 
         add(Box.createRigidArea(new Dimension(0, 100)));
         add(label);
-        add(Box.createRigidArea(new Dimension(0, 80)));
+        add(Box.createRigidArea(new Dimension(0, 40)));
+        add(typesBox);
+        add(Box.createRigidArea(new Dimension(0, 40)));
         add(textField);
-        add(Box.createRigidArea(new Dimension(0, 100)));
+        add(Box.createRigidArea(new Dimension(0, 40)));
         add(changeButton);
+    }
+
+    public String getSelectedDishType() {
+        return (String) typesBox.getSelectedItem();
     }
 
     public JTextField getTextField() {
         return textField;
+    }
+
+    private JComboBox<String> createTypesBox() {
+        JComboBox<String> resultBox = new JComboBox<>();
+        resultBox.setFont(new Font("Dialog", Font.PLAIN, 20));
+        setPrefMaxMinSizes(resultBox, new Dimension(200, 40));
+        resultBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resultBox.setOpaque(false);
+
+        for(String type: restaurant.kitchen.Menu.getTypes()) {
+            resultBox.addItem(type);
+        }
+
+        return resultBox;
     }
 
     private JTextField createTextField() {

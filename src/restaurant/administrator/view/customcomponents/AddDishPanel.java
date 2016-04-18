@@ -1,7 +1,6 @@
 package restaurant.administrator.view.customcomponents;
 
 import restaurant.kitchen.SwingHelper;
-import restaurant.administrator.view.AdminView;
 import restaurant.client.view.customcomponents.ImagePanel;
 
 import javax.swing.*;
@@ -17,13 +16,13 @@ import static restaurant.kitchen.SwingHelper.*;
  * Created by Аркадий on 01.04.2016.
  */
 public class AddDishPanel extends JPanel {
+    public static final int IMAGE_WIDTH = 290;
+    public static final int IMAGE_HEIGHT = 200;
     private final int MAX_WIDTH = 800;
     private final int MAX_HEIGHT = 600;
     private final int TEXT_WIDTH = MAX_WIDTH / 2 - 30;
-    private final int IMAGE_WIDTH = 290;
-    private final int IMAGE_HEIGHT = 200;
 
-    private final AdminView adminView;
+//    private final AdminView adminView;
 
     private JButton showImageButton;
     private JButton addOrEditDishButton;
@@ -34,16 +33,57 @@ public class AddDishPanel extends JPanel {
     private JTextArea fullDescArea;
     private JComboBox<String> typesBox;
     private JTextField priceField;
+    private JCheckBox imageCheckBox;
 
-    public AddDishPanel(AdminView adminView) {
-        this.adminView = adminView;
+    public AddDishPanel(ActionListener addOrEditButtonListener) {
+//        this.adminView = adminView;
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-        JPanel leftPanel = createLeftPanel();
+        JPanel leftPanel = createLeftPanel(addOrEditButtonListener);
         JPanel rightPanel = createRightPanel();
 
         add(leftPanel);
         add(rightPanel);
+    }
+
+    public JCheckBox getImageCheckBox() {
+        return imageCheckBox;
+    }
+
+    public JTextField getImagePathField() {
+        return imagePathField;
+    }
+
+    public JTextField getNameField() {
+        return nameField;
+    }
+
+    public JTextArea getShortDescArea() {
+        return shortDescArea;
+    }
+
+    public JTextArea getFullDescArea() {
+        return fullDescArea;
+    }
+
+    public JComboBox<String> getTypesBox() {
+        return typesBox;
+    }
+
+    public JTextField getPriceField() {
+        return priceField;
+    }
+
+    public int getImageWidth() {
+        return IMAGE_WIDTH;
+    }
+
+    public int getImageHeight() {
+        return IMAGE_HEIGHT;
+    }
+
+    public ImagePanel getDishImagePanel() {
+        return dishImagePanel;
     }
 
     private JPanel createRightPanel() {
@@ -96,10 +136,23 @@ public class AddDishPanel extends JPanel {
         imagePathField = createField();
         components.add(imagePathField);
 
+        imageCheckBox = createImageCheckBox();
+        components.add(imageCheckBox);
+
         dishImagePanel = createDishImagePanel();
         components.add(dishImagePanel);
 
         return components;
+    }
+
+    private JCheckBox createImageCheckBox() {
+        JCheckBox resultCheckBox = new JCheckBox("Set image?");
+        setPrefMaxMinSizes(resultCheckBox, new Dimension(200, 40));
+        resultCheckBox.setFont(new Font("Dialog", Font.PLAIN, 20));
+        resultCheckBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        resultCheckBox.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
+        resultCheckBox.setOpaque(false);
+        return resultCheckBox;
     }
 
     private ImagePanel createDishImagePanel() {
@@ -109,21 +162,21 @@ public class AddDishPanel extends JPanel {
         return resultPanel;
     }
 
-    private JPanel createLeftPanel() {
+    private JPanel createLeftPanel(ActionListener addOrEditButtonListener) {
         JPanel resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.PAGE_AXIS));
         setPrefMaxMinSizes(resultPanel, new Dimension(MAX_WIDTH / 2, MAX_HEIGHT));
         resultPanel.setBorder(BorderFactory.createRaisedBevelBorder());
         resultPanel.setBackground(Color.decode("0x4DED8A"));
 
-        List<Component> components = createComponentsForLeftPanel();
+        List<Component> components = createComponentsForLeftPanel(addOrEditButtonListener);
 
         addComponents(resultPanel, components);
 
         return resultPanel;
     }
 
-    private List<Component> createComponentsForLeftPanel() {
+    private List<Component> createComponentsForLeftPanel(ActionListener addOrEditButtonListener) {
         List<Component> components = new ArrayList<>();
 
         components.add(createLabel("Dish type:"));
@@ -147,7 +200,7 @@ public class AddDishPanel extends JPanel {
         components.add(fullDescPane);
 
         addOrEditDishButton = SwingHelper.createSimpleButton("ADD/EDIT DISH",
-                createListenerForAddButton(), new Dimension(200, 50));
+                addOrEditButtonListener, new Dimension(200, 50));
         components.add(addOrEditDishButton);
 
         return components;
@@ -166,123 +219,6 @@ public class AddDishPanel extends JPanel {
         }
 
         return resultBox;
-    }
-
-    private ActionListener createListenerForAddButton() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String type = (String) typesBox.getSelectedItem();
-                String name = nameField.getText().trim();
-                String shortDesc = shortDescArea.getText().trim();
-                String fullDesc = fullDescArea.getText().trim();
-                String imagePath = imagePathField.getText().trim();
-                String priceString = priceField.getText().trim();
-
-                boolean validTexts = checkValidityOfTexts(name, shortDesc, fullDesc, imagePath);
-                if(!validTexts) return;
-
-                double price = checkAndGetPrice(priceString);
-                if(price == -1) return;
-
-                boolean added = adminView.addOrEditDish(type, name, shortDesc, fullDesc, imagePath, price);
-                if(added) {
-                    showSuccessDialog(name, "added");
-                    adminView.updateMenuPanel();
-                } else {
-                    showSuccessDialog(name, "edited");
-                }
-                clearForm();
-            }
-
-            private double checkAndGetPrice(String priceString) {
-                try {
-                    double price = Double.parseDouble(priceString);
-                    if(price <= 0) throw new NumberFormatException();
-                    return price;
-                } catch (NumberFormatException e) {
-                    showErrorDialog("Invalid price!");
-                    return -1;
-                }
-            }
-
-            private void showSuccessDialog(String name, String operationName) {
-                JOptionPane.showMessageDialog(
-                        adminView.getFrame(),
-                        String.format("Dish \"%s\" was successfully %s!", name, operationName),
-                        "Brutz",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-
-            private void showErrorDialog(String text) {
-                JOptionPane.showMessageDialog(
-                        adminView.getFrame(),
-                        text,
-                        "Brutz",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-
-            private void clearForm() {
-                nameField.setText("");
-                shortDescArea.setText("");
-                fullDescArea.setText("");
-                imagePathField.setText("");
-                priceField.setText("");
-                Graphics g = dishImagePanel.getGraphics();
-                g.setColor(Color.GRAY);
-                g.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-            }
-
-            private boolean checkValidityOfTexts(
-                    String name, String shortDesc, String fullDesc, String imagePath) {
-
-                boolean validRowsNumber = checkRowsNumber(shortDesc, fullDesc);
-                if(!validRowsNumber) {
-                    return false;
-                }
-
-                boolean validTextsLength = checkTextsLength(name, shortDesc, fullDesc, imagePath);
-                if(!validTextsLength) {
-                    return false;
-                }
-
-                return true;
-            }
-
-            private boolean checkTextsLength(String name, String shortDesc, String fullDesc, String imagePath) {
-                if(name.length() > 34 || name.length() < 3) {
-                    showErrorDialog("Dish name must be between 3 and 34 characters!");
-                    return false;
-                } else if(shortDesc.length() > 105) {
-                    showErrorDialog("Dish short description must be up to 105 characters!");
-                    return false;
-                } else if(fullDesc.length() > 370) {
-                    showErrorDialog("Dish full description must be up to 370 characters!");
-                    return false;
-                } else if(imagePath.length() < 1) {
-                    showErrorDialog("Filepath to image must not be empty.\n" +
-                            "Enter \"no image\" if you don't want to change image\n" +
-                            "of editing dish, or set any image for new dish.");
-                    return false;
-                }
-                return true;
-            }
-
-            private boolean checkRowsNumber(String shortDesc, String fullDesc) {
-                if(countSeparators(shortDesc) > 1) {
-                    showErrorDialog("Short description must not contain more then 2 rows");
-                    return false;
-                } else if(countSeparators(fullDesc) > 9) {
-                    showErrorDialog("Full description must not contain more then 9 rows");
-                    return false;
-                }
-                return true;
-            }
-
-            private int countSeparators(String text) {
-                return text.length() - text.replace("\n", "").length();
-            }
-        };
     }
 
     private void addComponents(JPanel panel, List<Component> components) {
@@ -305,10 +241,10 @@ public class AddDishPanel extends JPanel {
     }
 
     private JTextField createField() {
-        JTextField nameField = new JTextField();
-        setPrefMaxMinSizes(nameField, new Dimension(TEXT_WIDTH, 40));
-        nameField.setFont(new Font("Dialog", Font.PLAIN, 20));
-        return nameField;
+        JTextField resultField = new JTextField();
+        setPrefMaxMinSizes(resultField, new Dimension(TEXT_WIDTH, 40));
+        resultField.setFont(new Font("Dialog", Font.PLAIN, 20));
+        return resultField;
     }
 
     private JLabel createLabel(String text) {
