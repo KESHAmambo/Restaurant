@@ -191,8 +191,15 @@ public class AdminModel {
                 new Date(fromDate.getTime()), new Date(toDate.getTime()));
     }
 
-    public TreeMap<Date, Double> processInfographicsQuery(QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
-        return dbManager.processInfographicsQuery(queryType,
+    public TreeMap<Date, Double> processBarInfographQuery(
+            QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
+        return dbManager.processBarInfographQuery(queryType,
+                new Date(fromDate.getTime()), new Date(toDate.getTime()));
+    }
+
+    public Map<String, Integer> processPieInfographQuery(
+            QueryType queryType, java.util.Date fromDate, java.util.Date toDate) {
+        return dbManager.processPieInfopraphQuery(queryType,
                 new Date(fromDate.getTime()), new Date(toDate.getTime()));
     }
 }

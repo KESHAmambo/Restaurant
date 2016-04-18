@@ -14,6 +14,13 @@ import java.util.*;
 public class DatabaseManager {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
     private final String ERROR_OCCURRED = "Error occurred!";
+
+    private final Connection connection;
+
+    private final PreparedStatement orderInsertStmt;
+    private final PreparedStatement dishInsertStmt;
+
+    // statistics statements
     private final PreparedStatement commonDishesSelectStmt;
     private final PreparedStatement allDishesSelectStmt;
     private final PreparedStatement commonOrdersSelectStmt;
@@ -22,22 +29,19 @@ public class DatabaseManager {
     private final PreparedStatement allCooksSelectStmt;
     private final PreparedStatement allWaitersSelectStmt;
     private final PreparedStatement allTablesSelectStmt;
+
+    // infographics statements
     private final PreparedStatement incomeByDaySelectStmt;
     private final PreparedStatement incomeByMonthSelectStmt;
     private final PreparedStatement dishesByDaySelectStmt;
     private final PreparedStatement dishesByMonthSelectStmt;
     private final PreparedStatement ordersByDaySelectStmt;
     private final PreparedStatement ordersByMonthSelectStmt;
-    private Connection connection;
-    private final Statement stmt;
-    private PreparedStatement orderInsertStmt;
-    private PreparedStatement dishInsertStmt;
+    private final PreparedStatement dishesTypesSelectStmt;
 
     public DatabaseManager() throws ClassNotFoundException, SQLException {
         Class.forName("oracle.jdbc.driver.OracleDriver");
         connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:restaurant", "hr", "hr");
-
-        stmt = connection.createStatement();
 
         orderInsertStmt = connection.prepareStatement(
                 "insert into orders (order_id, table_id, cook_name, waiter_name, received, started_cook, ready) " +
@@ -237,20 +241,32 @@ public class DatabaseManager {
 
         ordersByMonthSelectStmt = connection.prepareStatement(
                 "select trunc(received, 'MONTH'), count(*) " +
-                        "from orders " +
-                        "where received > ? and received < ? " +
-                        "group by trunc(received, 'MONTH')"
+                "from orders " +
+                "where received > ? and received < ? " +
+                "group by trunc(received, 'MONTH')"
+        );
+
+        // DISHES_TYPES queryType
+
+        dishesTypesSelectStmt = connection.prepareStatement(
+                "select d.type, count(*) " +
+                "from dishes d, orders o " +
+                "where d.order_id = o.order_id " +
+                "and o.received > ? and o.received < ? " +
+                "group by d.type"
         );
     }
 
     public void close() {
-        close(stmt, orderInsertStmt, dishInsertStmt,
+        close(orderInsertStmt, dishInsertStmt,
                 commonDishesSelectStmt, allDishesSelectStmt,
                 commonOrdersSelectStmt, allOrdersSelectStmt, orderDishesSelectStmt,
                 allCooksSelectStmt, allWaitersSelectStmt, allTablesSelectStmt,
                 incomeByDaySelectStmt,incomeByMonthSelectStmt,
                 dishesByDaySelectStmt, dishesByMonthSelectStmt,
-                ordersByDaySelectStmt, ordersByMonthSelectStmt);
+                ordersByDaySelectStmt, ordersByMonthSelectStmt,
+                dishesTypesSelectStmt,
+                connection);
     }
 
     private void close(AutoCloseable... autoCloseables) {
@@ -500,51 +516,68 @@ public class DatabaseManager {
         return ERROR_OCCURRED;
     }
 
-    public TreeMap<Date, Double> processInfographicsQuery(QueryType queryType, Date fromDate, Date toDate) {
-        ResultSet infographicsRS = null;
+    public TreeMap<Date, Double> processBarInfographQuery(QueryType queryType, Date fromDate, Date toDate) {
+        ResultSet infographRS = null;
         TreeMap<Date, Double> resultMap = new TreeMap<>();
         try {
-            infographicsRS = initInfographicsRS(queryType, fromDate, toDate);
-            while(infographicsRS.next()) {
-                resultMap.put(infographicsRS.getDate(1), infographicsRS.getDouble(2));
+            infographRS = initInfographRS(queryType, fromDate, toDate);
+            while(infographRS.next()) {
+                resultMap.put(infographRS.getDate(1), infographRS.getDouble(2));
             }
             complementWithEmptyPeriods(resultMap, queryType, fromDate, toDate);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            close(infographicsRS);
+            close(infographRS);
         }
         return resultMap;
     }
 
-    private ResultSet initInfographicsRS(
+    public Map<String, Integer> processPieInfopraphQuery(QueryType queryType, Date fromDate, Date toDate) {
+        ResultSet infographRS = null;
+        Map<String, Integer> resultMap = new HashMap<>();
+        try {
+            infographRS = initInfographRS(queryType, fromDate, toDate);
+            while(infographRS.next()) {
+                resultMap.put(infographRS.getString(1), infographRS.getInt(2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(infographRS);
+        }
+        return resultMap;
+    }
+
+    private ResultSet initInfographRS(
             QueryType queryType, Date fromDate, Date toDate)
             throws SQLException {
         switch(queryType) {
             case INCOME_BY_DAY:
-                setDatesForStmt(incomeByDaySelectStmt, fromDate, toDate);
-                return incomeByDaySelectStmt.executeQuery();
+                return executeQuery(incomeByDaySelectStmt, fromDate, toDate);
             case INCOME_BY_MONTH:
-                setDatesForStmt(incomeByMonthSelectStmt, fromDate, toDate);
-                return incomeByMonthSelectStmt.executeQuery();
+                return executeQuery(incomeByMonthSelectStmt, fromDate, toDate);
             case DISHES_BY_DAY:
-                setDatesForStmt(dishesByDaySelectStmt, fromDate, toDate);
-                return dishesByDaySelectStmt.executeQuery();
+                return executeQuery(dishesByDaySelectStmt, fromDate, toDate);
             case DISHES_BY_MONTH:
-                setDatesForStmt(dishesByMonthSelectStmt, fromDate, toDate);
-                return dishesByMonthSelectStmt.executeQuery();
+                return executeQuery(dishesByMonthSelectStmt, fromDate, toDate);
             case ORDERS_BY_DAY:
-                setDatesForStmt(ordersByDaySelectStmt, fromDate, toDate);
-                return ordersByDaySelectStmt.executeQuery();
+                return executeQuery(ordersByDaySelectStmt, fromDate, toDate);
             case ORDERS_BY_MONTH:
-                setDatesForStmt(ordersByMonthSelectStmt, fromDate, toDate);
-                return ordersByMonthSelectStmt.executeQuery();
+                return executeQuery(ordersByMonthSelectStmt, fromDate, toDate);
+            case DISHES_TYPES:
+                return executeQuery(dishesTypesSelectStmt, fromDate, toDate);
             default:
                 throw new SQLException("Invalid queryType");
         }
     }
 
-    private void setDatesForStmt(PreparedStatement stmt, Date fromDate, Date toDate) throws SQLException {
+    private ResultSet executeQuery(PreparedStatement stmt, Date fromDate, Date toDate) throws SQLException {
+        setDatesAtFirstPositionsOfStmt(stmt, fromDate, toDate);
+        return stmt.executeQuery();
+    }
+
+    private void setDatesAtFirstPositionsOfStmt(PreparedStatement stmt, Date fromDate, Date toDate) throws SQLException {
         stmt.setDate(1, fromDate);
         stmt.setDate(2, toDate);
     }
@@ -561,19 +594,20 @@ public class DatabaseManager {
             case ORDERS_BY_DAY:
             case DISHES_BY_DAY:
             case INCOME_BY_DAY:
-                addMissingPeriods(Calendar.DATE, resultMap,
+                addMissedPeriods(Calendar.DATE, resultMap,
                         toCalendar, changingCalendar);
                 break;
             case ORDERS_BY_MONTH:
             case DISHES_BY_MONTH:
             case INCOME_BY_MONTH:
                 changingCalendar.set(Calendar.DATE, 1);
-                addMissingPeriods(Calendar.MONTH, resultMap,
+                addMissedPeriods(Calendar.MONTH, resultMap,
                         toCalendar, changingCalendar);
+                break;
         }
     }
 
-    private void addMissingPeriods(
+    private void addMissedPeriods(
             int period, TreeMap<Date, Double> resultMap,
             Calendar toCalendar, Calendar changingCalendar) {
         while(changingCalendar.compareTo(toCalendar) < 0) {

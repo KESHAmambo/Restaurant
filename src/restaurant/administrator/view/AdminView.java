@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -76,15 +77,31 @@ public class AdminView {
                     Date fromDate = convertDate(infographicsPanel.getFromDateString());
                     Date toDate = convertDate(infographicsPanel.getToDateString());
 
-                    TreeMap<java.sql.Date, Double> data = model.processInfographicsQuery(queryType, fromDate, toDate);
-
-                    if(!data.isEmpty()) {
-                        infographicsPanel.drawBarChart(data);
+                    if(queryType == QueryType.DISHES_TYPES) {
+                        processPieInfographQuery(queryType, fromDate, toDate);
                     } else {
-                        showWarningDialog("No statistics for specified period.");
+                        processBarInfographQuery(queryType, fromDate, toDate);
                     }
                 } catch (ParseException e1) {
                     showWarningDialog("Invalid date format!");
+                }
+            }
+
+            private void processPieInfographQuery(QueryType queryType, Date fromDate, Date toDate) {
+                Map<String, Integer> data = model.processPieInfographQuery(queryType, fromDate, toDate);
+                if (!data.isEmpty()) {
+                    infographicsPanel.drawPieChart(data);
+                } else {
+                    showWarningDialog("No statistics for specified period.");
+                }
+            }
+
+            private void processBarInfographQuery(QueryType queryType, Date fromDate, Date toDate) {
+                TreeMap<java.sql.Date, Double> data = model.processBarInfographQuery(queryType, fromDate, toDate);
+                if (!data.isEmpty()) {
+                    infographicsPanel.drawBarChart(data);
+                } else {
+                    showWarningDialog("No statistics for specified period.");
                 }
             }
         };

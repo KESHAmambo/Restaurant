@@ -8,6 +8,7 @@ import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import restaurant.administrator.model.QueryType;
 
 import javax.swing.*;
@@ -29,7 +30,8 @@ public class InfographicsPanel extends QueryPanel {
         super(buttonListener,
                 QueryType.ORDERS_BY_DAY, QueryType.ORDERS_BY_MONTH,
                 QueryType.DISHES_BY_DAY, QueryType.DISHES_BY_MONTH,
-                QueryType.INCOME_BY_DAY, QueryType.INCOME_BY_MONTH);
+                QueryType.INCOME_BY_DAY, QueryType.INCOME_BY_MONTH,
+                QueryType.DISHES_TYPES);
 
         plotPanel = createPlotPanel();
 
@@ -46,14 +48,14 @@ public class InfographicsPanel extends QueryPanel {
     public void drawBarChart(TreeMap<Date, Double> data) {
         plotPanel.removeAll();
 
-        ChartPanel chartPanel = createChartPanel(data);
+        ChartPanel chartPanel = createBarChartPanel(data);
 
         plotPanel.add(chartPanel, BorderLayout.CENTER);
         plotPanel.revalidate();
         plotPanel.repaint();
     }
 
-    private ChartPanel createChartPanel(TreeMap<Date, Double> data) {
+    private ChartPanel createBarChartPanel(TreeMap<Date, Double> data) {
         QueryType queryType = getSelectedQueryType();
         String queryName = queryType.toString().replace('_', ' ');
 
@@ -62,18 +64,41 @@ public class InfographicsPanel extends QueryPanel {
             dataset.addValue(pair.getValue(), queryName, pair.getKey());
         }
 
-        //TODO substring months dates
         final JFreeChart chart = ChartFactory.createBarChart(
                 queryName, "Date", "Value",
                 dataset, PlotOrientation.VERTICAL,
                 true, true, false);
 
         CategoryPlot plot = chart.getCategoryPlot();
-        final CategoryAxis domainAxis = plot.getDomainAxis();
+        CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setCategoryLabelPositions(
                 CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 3)
         );
 
+        return new ChartPanel(chart);
+    }
+
+    public void drawPieChart(Map<String, Integer> data) {
+        plotPanel.removeAll();
+
+        ChartPanel chartPanel = createPieChartPanel(data);
+
+        plotPanel.add(chartPanel);
+        plotPanel.revalidate();
+        plotPanel.repaint();
+    }
+
+    private ChartPanel createPieChartPanel(Map<String, Integer> data) {
+        QueryType queryType = getSelectedQueryType();
+        String queryName = queryType.toString().replace('_', ' ');
+
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        for(Map.Entry<String, Integer> pair: data.entrySet()) {
+            dataset.setValue(pair.getKey(), pair.getValue());
+        }
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                queryName, dataset, true, true, false);
         return new ChartPanel(chart);
     }
 }

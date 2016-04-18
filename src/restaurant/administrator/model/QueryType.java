@@ -17,5 +17,6 @@ public enum QueryType {
     INCOME_BY_DAY,
     INCOME_BY_MONTH,
     ORDERS_BY_DAY,
-    ORDERS_BY_MONTH;
+    ORDERS_BY_MONTH,
+    DISHES_TYPES;
 }
