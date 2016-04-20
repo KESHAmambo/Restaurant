@@ -1,9 +1,9 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.MessageType;
-import restaurant.administrator.Connection;
-import restaurant.administrator.Server;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
+import restaurant.kitchen.Connection;
+import restaurant.administrator.controller.Server;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,6 +15,7 @@ public abstract class Handler implements Runnable {
     private static List<String> actorsNames = Server.getActorsNames();
     protected final Connection connection;
     protected String actorName;
+
     public Handler(Connection connection) {
         this.connection = connection;
     }
@@ -24,7 +25,7 @@ public abstract class Handler implements Runnable {
             connection.send(new Message(MessageType.NAME_REQUEST));
             Message nameMessage = connection.receive();
             if(nameMessage.getMessageType() == MessageType.ACTOR_NAME) {
-                String name = nameMessage.getClientName();
+                String name = nameMessage.getFirstString();
                 if(name != null && !name.isEmpty() && !actorsNames.contains(name)) {
                     actorName = name;
                     actorsNames.add(actorName);
@@ -38,7 +39,7 @@ public abstract class Handler implements Runnable {
     protected abstract void handlerMainLoop()
             throws IOException, ClassNotFoundException, InterruptedException;
 
-    protected void informServerAndCloseConnection(String actorType) {
+    void informServerAndCloseConnection(String actorType) {
         Server.updateConnectionsInfo(actorType + " " + actorName + " was disconnected!");
         Server.getActorsNames().remove(actorName);
         try {

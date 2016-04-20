@@ -11,9 +11,6 @@ import java.io.*;
  */
 public class ClientModel {
     private final String MENU_PATH = "src/restaurant/client/menu.txt";
-    private final String DISH_IMAGES_PATH = "src/restaurant/client/view/resources/dishimages/";
-
-    private ClientController controller;
 
     private Menu menu;
     private Order order;
@@ -22,9 +19,7 @@ public class ClientModel {
     private double currentBill;
     private double finalBill;
 
-    public ClientModel(ClientController controller) {
-        this.controller = controller;
-
+    public ClientModel() {
         try(FileInputStream fileIS = new FileInputStream(MENU_PATH);
             ObjectInputStream objectIS = new ObjectInputStream(fileIS)) {
             menu = (Menu) objectIS.readObject();
@@ -93,54 +88,6 @@ public class ClientModel {
         Order emptyOrder = new Order();
         emptyOrder.setClientName(getCurrentClientName());
         setOrder(emptyOrder);
-    }
-
-    public void changeDishStatus(Dish dish) {
-        Dish changingDish = menu.getDishByTypeAndName(
-                dish.getType(), dish.getName());
-        changingDish.setDeleted(dish.isDeleted());
-    }
-
-    public void processAddedOrEditedDish(Dish dish, boolean needImage) throws IOException {
-        boolean alreadyExisted = processAsExistedDish(dish, needImage);
-        if(!alreadyExisted) {
-            processAsNewDish(dish, needImage);
-        }
-    }
-
-    private boolean processAsExistedDish(Dish dish, boolean needImage) throws IOException {
-        Dish existedDish = menu.getDishByTypeAndName(
-                dish.getType(), dish.getName());
-        if(existedDish != null) {
-            existedDish.setFullDesc(dish.getFullDesc());
-            existedDish.setShortDesc(dish.getShortDesc());
-            existedDish.setPrice(dish.getPrice());
-            if(needImage) {
-                String imagePath = dish.getImagePath();
-                String imageName = subImageName(imagePath);
-                imagePath = DISH_IMAGES_PATH + imageName;
-                existedDish.setImagePath(imagePath);
-                controller.downloadImage(imagePath);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private String subImageName(String imagePath) {
-        String imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
-        imageName = imageName.substring(imageName.lastIndexOf('\\') + 1);
-        return imageName;
-    }
-
-    private void processAsNewDish(Dish dish, boolean needImage) throws IOException {
-        menu.addDish(dish);
-        if(needImage) {
-            String imagePath = dish.getImagePath();
-            String imageName = subImageName(imagePath);
-            dish.setImagePath(DISH_IMAGES_PATH + imageName);
-            controller.downloadImage(dish.getImagePath());
-        }
     }
 
     public void serializeMenu() {

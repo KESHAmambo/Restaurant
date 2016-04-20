@@ -1,4 +1,4 @@
-package restaurant.administrator;
+package restaurant.administrator.controller;
 
 import restaurant.administrator.model.AdminModel;
 import restaurant.administrator.view.AdminView;
@@ -20,7 +20,7 @@ public class AdminController {
     }
 
     public void startServer() {
-        model.serializeNewMenu();
+        model.serializeMenu();
 
         new Thread(new Runnable() {
             @Override
@@ -31,8 +31,8 @@ public class AdminController {
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
-                    view.showWarningDialog("SERVER CRASHED!");
-                    stopServer();
+                    view.showErrorDialog("SERVER CRASHED!");
+                    closeResourcesAndStopServer();
                 }
             }
 
@@ -40,12 +40,11 @@ public class AdminController {
                 try {
                     String address = view.askServerAddress();
                     int port = view.askServerPort();
-                    Server.start(AdminController.this, address, port, model.getNeedImageDishes(),
-                            model.getNotNeedImageDishes(), model.getStatusChangedDishes());
+                    Server.start(AdminController.this, address, port, model.getMenu());
                 } catch(UnknownHostException e) {
-                    view.showWarningDialog("Invalid server address!");
+                    view.showErrorDialog("Invalid server address!");
                 } catch(IllegalArgumentException e) {
-                    view.showWarningDialog("Invalid port!");
+                    view.showErrorDialog("Invalid port!");
                 }
             }
         }).start();
@@ -59,7 +58,7 @@ public class AdminController {
         model.writeOrderToDatabase(order);
     }
 
-    public void stopServer() {
+    public void closeResourcesAndStopServer() {
         model.close();
         System.exit(0);
     }

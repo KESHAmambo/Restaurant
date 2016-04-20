@@ -1,6 +1,4 @@
-package restaurant;
-
-import restaurant.administrator.Connection;
+package restaurant.kitchen;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -11,7 +9,6 @@ import java.net.Socket;
 public abstract class Actor {
     protected String actorName;
     protected Connection connection;
-    protected volatile boolean actorConnected = false;
 
     protected void run() {
         try {
@@ -24,18 +21,20 @@ public abstract class Actor {
         } catch (IOException | ClassNotFoundException | IllegalArgumentException e) {
             e.printStackTrace();
             notifyConnectionStatusChanged(false);
+        } finally {
+            closeResources();
         }
     }
 
     protected abstract void actorHandshake() throws  IOException, ClassNotFoundException;
 
-    protected void shake(MessageType messageType) throws IOException, ClassNotFoundException {
-        Message handshakeMessage = new Message(messageType);
-        connection.send(handshakeMessage);
+    protected void shake(MessageType connectionType) throws IOException, ClassNotFoundException {
+        Message connectionTypeMessage = new Message(connectionType);
+        connection.send(connectionTypeMessage);
         String name = null;
         while(true) {
-            Message receiveMessage = connection.receive();
-            switch(receiveMessage.getMessageType()) {
+            Message message = connection.receive();
+            switch(message.getMessageType()) {
                 case NAME_REQUEST:
                     name = askName();
                     connection.send(new Message(MessageType.ACTOR_NAME, name));
@@ -45,14 +44,22 @@ public abstract class Actor {
                     notifyConnectionStatusChanged(true);
                     return;
                 default:
-                    throw new IOException("Unexpected MessageType");
+                    throw new IOException("Invalid message type: " + message.getMessageType());
             }
         }
     }
 
-    protected abstract void actorMainLoop() throws IOException, ClassNotFoundException;
+    private void closeResources() {
+        try {
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public abstract void sendMessage(Message message);
+
+    protected abstract void actorMainLoop() throws IOException, ClassNotFoundException;
 
     protected abstract int askServerPort();
 

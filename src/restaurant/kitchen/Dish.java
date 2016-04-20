@@ -11,23 +11,29 @@ public class Dish implements Serializable {
     private String name;
     private String fullDesc;
     private String shortDesc;
-    private String imagePath;
+    private String clientImagePath;
+    private String serverImagePath;
     private double price;
     private boolean deleted = false;
 
     //Constructors
 
-    public Dish(String type, String name, String fullDesc,
-                String shortDesc, String imagePath, double price) {
+    public Dish(String type, String name,
+                String shortDesc, String fullDesc,
+                String serverImagePath, double price) {
         this.type = type;
         this.name = name;
-        this.fullDesc = fullDesc;
         this.shortDesc = shortDesc;
-        this.imagePath = imagePath;
+        this.fullDesc = fullDesc;
+        this.serverImagePath = serverImagePath;
         this.price = price;
     }
 
     //Setters
+
+    public void setServerImagePath(String serverImagePath) {
+        this.serverImagePath = serverImagePath;
+    }
 
     public void setType(String type) {
         this.type = type;
@@ -45,8 +51,8 @@ public class Dish implements Serializable {
         this.shortDesc = shortDescription;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setClientImagePath(String clientImagePath) {
+        this.clientImagePath = clientImagePath;
     }
 
     public void setPrice(double price) {
@@ -54,6 +60,10 @@ public class Dish implements Serializable {
     }
 
     //Getters
+
+    public String getServerImagePath() {
+        return serverImagePath;
+    }
 
     public String getType() {
         return type;
@@ -71,8 +81,8 @@ public class Dish implements Serializable {
         return shortDesc;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getClientImagePath() {
+        return clientImagePath;
     }
 
     public double getPrice() {

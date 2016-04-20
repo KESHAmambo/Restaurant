@@ -1,9 +1,8 @@
-package restaurant.administrator;
+package restaurant.administrator.controller;
 
-import restaurant.administrator.handlers.*;
-import restaurant.Message;
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
+import restaurant.kitchen.*;
+import restaurant.administrator.controller.handlers.Handler;
+import restaurant.administrator.controller.handlers.HandlerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,21 +27,14 @@ public class Server {
             Collections.synchronizedMap(new HashMap<String, Connection>());
 
     private static AdminController controller;
-    private static List<Dish> needImageDishes;
-    private static List<Dish> notNeedImageDishes;
-    private static List<Dish> statusChangedDishes;
+    private static Menu menu;
 
     private Server() {}
 
-    public static void start(
-            AdminController controller, String address, int port,
-            List<Dish> needImageDishes, List<Dish> notNeedImageDishes,
-            List<Dish> statusChangedDishes)
+    public static void start(AdminController controller, String address, int port, Menu menu)
             throws IOException, ClassNotFoundException {
         Server.controller = controller;
-        Server.needImageDishes = needImageDishes;
-        Server.notNeedImageDishes = notNeedImageDishes;
-        Server.statusChangedDishes = statusChangedDishes;
+        Server.menu = menu;
 
         try(ServerSocket serverSocket =
                     new ServerSocket(port, 100, InetAddress.getByName(address))) {
@@ -64,16 +56,8 @@ public class Server {
         }
     }
 
-    public static List<Dish> getNotNeedImageDishes() {
-        return notNeedImageDishes;
-    }
-
-    public static List<Dish> getStatusChangedDishes() {
-        return statusChangedDishes;
-    }
-
-    public static List<Dish> getNeedImageDishes() {
-        return needImageDishes;
+    public static Menu getMenu() {
+        return menu;
     }
 
     public static BlockingQueue<Order> getWaitingOrders() {

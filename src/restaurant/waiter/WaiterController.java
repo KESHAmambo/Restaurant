@@ -1,8 +1,8 @@
 package restaurant.waiter;
 
-import restaurant.Actor;
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Actor;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.kitchen.Order;
 import restaurant.waiter.view.WaiterView;
 
@@ -28,25 +28,21 @@ public class WaiterController extends Actor {
 
     @Override
     protected void actorMainLoop() throws IOException, ClassNotFoundException {
-        try {
-            while (true) {
-                Message receivedMessage = connection.receive();
-                switch(receivedMessage.getMessageType()) {
-                    case NEW_CLIENT:
-                        informAboutNewClient(receivedMessage.getClientName());
-                        break;
-                    case ORDER_IS_READY:
-                        informAboutReadyOrder(receivedMessage.getOrder());
-                        break;
-                    case TEXT:
-                        informAboutNewText(receivedMessage.getClientName(), receivedMessage.getText());
-                        break;
-                    case END_MEAL:
-                        informAboutEndMeal(receivedMessage.getClientName(), receivedMessage.getBill());
-                }
+        while (true) {
+            Message receivedMessage = connection.receive();
+            switch(receivedMessage.getMessageType()) {
+                case NEW_CLIENT:
+                    informAboutNewClient(receivedMessage.getFirstString());
+                    break;
+                case ORDER_IS_READY:
+                    informAboutReadyOrder(receivedMessage.getOrder());
+                    break;
+                case TEXT:
+                    informAboutNewText(receivedMessage.getFirstString(), receivedMessage.getSecondString());
+                    break;
+                case END_MEAL:
+                    informAboutEndMeal(receivedMessage.getFirstString(), receivedMessage.getBill());
             }
-        } finally {
-            connection.close();
         }
     }
 

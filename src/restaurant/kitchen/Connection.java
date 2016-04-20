@@ -1,6 +1,6 @@
-package restaurant.administrator;
+package restaurant.kitchen;
 
-import restaurant.Message;
+import restaurant.kitchen.Message;
 
 import java.io.*;
 import java.net.Socket;
@@ -63,7 +63,7 @@ public class Connection implements Closeable {
         }
     }
 
-    public void downloadImage(String imagePath) throws IOException {
+    public void receiveImage(String imagePath) throws IOException {
         synchronized(is) {
             long imageSize = dataIS.readLong();
             if(imageSize == -1) return;
@@ -87,6 +87,4 @@ public class Connection implements Closeable {
         objectOS.close();
         socket.close();
     }
-
-
 }

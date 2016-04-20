@@ -1,8 +1,8 @@
 package restaurant.cook;
 
-import restaurant.Actor;
-import restaurant.Message;
-import restaurant.MessageType;
+import restaurant.kitchen.Actor;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
 import restaurant.cook.view.CookView;
 import restaurant.kitchen.Order;
 
@@ -28,20 +28,16 @@ public class CookController extends Actor {
 
     @Override
     protected void actorMainLoop() throws IOException, ClassNotFoundException {
-        try {
-            while (true) {
-                Message receivedMessage = connection.receive();
-                if(receivedMessage.getMessageType() == MessageType.ORDER) {
-                    Order order = receivedMessage.getOrder();
-                    informAboutNewOrder(order);
-                } else if(receivedMessage.getMessageType() == MessageType.PING) {
-                    //do nothing
-                } else {
-                    throw new IOException("Unexpected message!");
-                }
+        while (true) {
+            Message message = connection.receive();
+            if(message.getMessageType() == MessageType.ORDER) {
+                Order order = message.getOrder();
+                informAboutNewOrder(order);
+            } else if(message.getMessageType() == MessageType.PING) {
+                //do nothing
+            } else {
+                throw new IOException("Invalid message type: " + message.getMessageType());
             }
-        } finally {
-            connection.close();
         }
     }
 

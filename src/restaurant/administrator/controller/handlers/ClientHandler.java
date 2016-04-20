@@ -1,15 +1,10 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.MessageType;
-import restaurant.administrator.Connection;
-import restaurant.administrator.Server;
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
+import restaurant.administrator.controller.Server;
+import restaurant.kitchen.*;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -23,10 +18,7 @@ public class ClientHandler extends Handler {
             Server.getWaitersLinksFromNameToConnection();
     private BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
     private BlockingQueue<String> waiters = Server.getWaiters();
-
-    private List<Dish> needImageDishes = Server.getNeedImageDishes();
-    private List<Dish> notNeedImageDishes = Server.getNotNeedImageDishes();
-    private List<Dish> statusChangedDishes = Server.getStatusChangedDishes();
+    private Menu menu = Server.getMenu();
 
     private String waiterName;
     private Connection waiterConnection;
@@ -42,7 +34,8 @@ public class ClientHandler extends Handler {
         try {
             requestActorName();
             Server.updateConnectionsInfo("Table " + actorName + " was connected.");
-            sendMenuChanges();
+            sendMenu();
+            sendImages();
             handlerMainLoop();
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -51,35 +44,28 @@ public class ClientHandler extends Handler {
         }
     }
 
-    private void sendMenuChanges() throws IOException {
-        sendNumberOfDishes();
-        sendStatusChangedDishes();
-        sendNotNeedImageDishes();
-        sendNeedImageDishes();
+    private void sendMenu() throws IOException {
+        connection.send(new Message(MessageType.MENU, menu));
     }
 
-    private void sendNumberOfDishes() throws IOException {
-        int numberOfDishes = statusChangedDishes.size() +
-                notNeedImageDishes.size() + needImageDishes.size();
-        connection.send(new Message(MessageType.DISHES_NUMBER, numberOfDishes));
-    }
-
-    private void sendStatusChangedDishes() throws IOException {
-        for(Dish dish: statusChangedDishes) {
-            connection.send(new Message(MessageType.STATUS_CHANGED_DISH, dish));
+    private void sendImages() throws IOException, ClassNotFoundException {
+        Message message = connection.receive();
+        if(message.getMessageType() == MessageType.IMAGES_COUNT) {
+            int imagesCount = message.getImagesCount();
+            sendImages(imagesCount);
+        } else {
+            throw new IOException("Invalid message type: " + message.getMessageType());
         }
     }
 
-    private void sendNotNeedImageDishes() throws IOException {
-        for(Dish dish: notNeedImageDishes) {
-            connection.send(new Message(MessageType.DISH_WITHOUT_IMAGE, dish));
-        }
-    }
-
-    private void sendNeedImageDishes() throws IOException {
-        for(Dish dish: needImageDishes) {
-            connection.send(new Message(MessageType.DISH_WITH_IMAGE, dish));
-            connection.sendImage(dish.getImagePath());
+    private void sendImages(int imagesCount) throws IOException, ClassNotFoundException {
+        for(int i = 0; i < imagesCount; i++) {
+            Message message = connection.receive();
+            if(message.getMessageType() == MessageType.IMAGE_REQEUST) {
+                connection.sendImage(message.getFirstString());
+            } else {
+                throw new IOException("Invalid message type: " + message.getMessageType());
+            }
         }
     }
 
@@ -138,7 +124,7 @@ public class ClientHandler extends Handler {
             setNewWaiter();
             if (informAboutNewClient) {
                 waiterConnection.send(new Message(
-                        MessageType.NEW_CLIENT, message.getClientName()));
+                        MessageType.NEW_CLIENT, message.getFirstString()));
             }
             waiterConnection.send(message);
         } catch (IOException e) {
@@ -150,7 +136,7 @@ public class ClientHandler extends Handler {
         Message newClientMessage = connection.receive();
         if (newClientMessage.getMessageType() == MessageType.NEW_CLIENT) {
             hasCurrentClient = true;
-            currentName = newClientMessage.getClientName();
+            currentName = newClientMessage.getFirstString();
             clientsLinksFromNameToConnection.put(currentName, connection);
 
             setNewWaiterAndSend(newClientMessage, false);

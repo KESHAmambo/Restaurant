@@ -2,9 +2,6 @@ package restaurant.cook;
 
 import restaurant.kitchen.Order;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Аркадий on 14.03.2016.
  */

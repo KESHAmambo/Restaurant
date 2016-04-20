@@ -30,24 +30,6 @@ public class Menu implements Serializable, Cloneable {
         return store.get(type);
     }
 
-    /**
-     * @param dishName
-     * @param deleted
-     * @return dish, which deleted field was changed,
-     * null if dish was't found
-     */
-    public Dish setDeletedAndGetDishByName(String dishName, boolean deleted) {
-        for(List<Dish> dishes: store.values()) {
-            for(Dish dish: dishes) {
-                if(dish.getName().equals(dishName)) {
-                    dish.setDeleted(deleted);
-                    return dish;
-                }
-            }
-        }
-        return null;
-    }
-
     public static List<String> getTypes() {
         List<String> types = new ArrayList<>();
         types.add("burgers");
@@ -63,33 +45,56 @@ public class Menu implements Serializable, Cloneable {
         return types;
     }
 
-    public Dish getDishByTypeAndName(String type, String name) {
-            for(Dish dish: store.get(type)) {
-                if(dish.getName().equals(name)) {
-                    return dish;
-                }
+    public Dish getDish(String type, String name) {
+        for(Dish dish: store.get(type)) {
+            if(dish.getName().equals(name)) {
+                return dish;
             }
+        }
         return null;
     }
 
-    public void addDish(Dish dish) {
+    public void add(Dish dish) {
         store.get(dish.getType()).add(dish);
     }
 
-    @Override
-    public Menu clone() throws CloneNotSupportedException {
-        Menu newMenu = new Menu();
-        for(Map.Entry<String, List<Dish>> pair: store.entrySet()) {
-            for(Dish dish: pair.getValue()) {
-                newMenu.addDish(dish);
-            }
-        }
-        return newMenu;
+    /**
+     * @return true if dish is new and was added to newMenu,
+     * false if dish is already exists and was edited
+     */
+    public boolean addOrEditDish(
+            String type, String name, String shortDesc, String fullDesc,
+            String serverImagePath, double price) {
+        boolean alreadyExisted = !removeDish(type, name);
+        Dish dish = new Dish(type, name, shortDesc, fullDesc, serverImagePath, price);
+        add(dish);
+        return alreadyExisted;
     }
 
-    public boolean removeDish(Dish newDish) {
+    private boolean removeDish(String type, String name) {
+        List<Dish> typeDishes = store.get(type);
+        for(Dish dish: typeDishes) {
+            if(dish.getName().equals(name)) {
+                typeDishes.remove(dish);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Dish removeDish(Dish dish) {
         for(Map.Entry<String, List<Dish>> pair: store.entrySet()) {
-            if(pair.getValue().remove(newDish)) {
+            if(pair.getValue().remove(dish)) {
+                return dish;
+            }
+        }
+        return null;
+    }
+
+    public boolean changeDishDeletedStatus(String type, String name, boolean deleted) {
+        for(Dish dish: store.get(type)) {
+            if(dish.getName().equals(name)) {
+                dish.setDeleted(deleted);
                 return true;
             }
         }

@@ -1,9 +1,9 @@
-package restaurant.administrator.handlers;
+package restaurant.administrator.controller.handlers;
 
-import restaurant.Message;
-import restaurant.MessageType;
-import restaurant.administrator.Connection;
-import restaurant.administrator.Server;
+import restaurant.administrator.controller.Server;
+import restaurant.kitchen.Message;
+import restaurant.kitchen.MessageType;
+import restaurant.kitchen.Connection;
 
 import java.io.IOException;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class WaiterHandler extends Handler {
     protected void handlerMainLoop() throws IOException, ClassNotFoundException {
         while(true) {
             Message message = connection.receive();
-            String clientName = message.getClientName();
+            String clientName = message.getFirstString();
             if(message.getMessageType() == MessageType.TEXT && clientName != null) {
                 Connection clientConnection = clientsLinksFromNameToConnection.get(clientName);
                 if (clientConnection != null) {
