@@ -1,14 +1,14 @@
 package restaurant.client.view;
 
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
+import restaurant.common.Message;
+import restaurant.common.MessageType;
 import restaurant.client.ClientController;
 import restaurant.client.ClientModel;
 import restaurant.client.view.animation.FullDescAnimation;
 import restaurant.client.view.customcomponents.*;
 import restaurant.client.view.animation.MyOrderAnimation;
-import restaurant.kitchen.*;
-import restaurant.kitchen.Menu;
+import restaurant.common.*;
+import restaurant.common.Menu;
 
 import javax.swing.*;
 import java.awt.*;

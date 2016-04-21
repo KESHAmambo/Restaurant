@@ -1,7 +1,7 @@
 package restaurant.administrator.model;
 
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
+import restaurant.common.Dish;
+import restaurant.common.Order;
 
 import java.sql.*;
 import java.sql.Date;
@@ -11,12 +11,13 @@ import java.util.*;
 /**
  * Created by Аркадий on 09.04.2016.
  */
-public class DatabaseManager {
+class DatabaseManager {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
     private final String ERROR_OCCURRED = "Error occurred!";
 
     private final Connection connection;
 
+    //writing statements
     private final PreparedStatement orderInsertStmt;
     private final PreparedStatement dishInsertStmt;
 
@@ -39,7 +40,7 @@ public class DatabaseManager {
     private final PreparedStatement ordersByMonthSelectStmt;
     private final PreparedStatement dishesTypesSelectStmt;
 
-    public DatabaseManager() throws ClassNotFoundException, SQLException {
+    DatabaseManager() throws ClassNotFoundException, SQLException {
         Class.forName("oracle.jdbc.driver.OracleDriver");
         connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:restaurant", "hr", "hr");
 
@@ -257,7 +258,7 @@ public class DatabaseManager {
         );
     }
 
-    public void close() {
+    void close() {
         close(orderInsertStmt, dishInsertStmt,
                 commonDishesSelectStmt, allDishesSelectStmt,
                 commonOrdersSelectStmt, allOrdersSelectStmt, orderDishesSelectStmt,
@@ -281,7 +282,7 @@ public class DatabaseManager {
         }
     }
 
-    public void write(Order order) {
+    void write(Order order) {
         try {
             writeOrder(order);
             writeDishes(order);
@@ -309,7 +310,7 @@ public class DatabaseManager {
         }
     }
 
-    public String processQuery(QueryType queryType, Date fromDate, Date toDate) {
+    String processQuery(QueryType queryType, Date fromDate, Date toDate) {
         switch(queryType) {
             case DISHES:
                 return processDishesQuery(fromDate, toDate);
@@ -516,7 +517,7 @@ public class DatabaseManager {
         return ERROR_OCCURRED;
     }
 
-    public TreeMap<Date, Double> processBarInfographQuery(QueryType queryType, Date fromDate, Date toDate) {
+    TreeMap<Date, Double> processBarInfographQuery(QueryType queryType, Date fromDate, Date toDate) {
         ResultSet infographRS = null;
         TreeMap<Date, Double> resultMap = new TreeMap<>();
         try {
@@ -533,7 +534,7 @@ public class DatabaseManager {
         return resultMap;
     }
 
-    public Map<String, Integer> processPieInfopraphQuery(QueryType queryType, Date fromDate, Date toDate) {
+    Map<String, Integer> processPieInfopraphQuery(QueryType queryType, Date fromDate, Date toDate) {
         ResultSet infographRS = null;
         Map<String, Integer> resultMap = new HashMap<>();
         try {

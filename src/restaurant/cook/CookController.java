@@ -1,17 +1,14 @@
 package restaurant.cook;
 
-import restaurant.kitchen.Actor;
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
+import restaurant.common.*;
 import restaurant.cook.view.CookView;
-import restaurant.kitchen.Order;
 
 import java.io.IOException;
 
 /**
  * Created by Аркадий on 14.03.2016.
  */
-public class CookController extends Actor {
+public class CookController extends ActorController {
     private CookModel model = new CookModel();
     private CookView view = new CookView(this, model);
 
@@ -22,26 +19,24 @@ public class CookController extends Actor {
     }
 
     @Override
-    protected void actorHandshake() throws IOException, ClassNotFoundException {
-        shake(MessageType.COOK_CONNECTION);
+    protected void handshakeServer()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
+        sendConnectionTypeAndActorName(MessageType.COOK_CONNECTION);
     }
 
     @Override
-    protected void actorMainLoop() throws IOException, ClassNotFoundException {
-        try {
-            while (true) {
-                Message receivedMessage = connection.receive();
-                if(receivedMessage.getMessageType() == MessageType.ORDER) {
-                    Order order = receivedMessage.getOrder();
-                    informAboutNewOrder(order);
-                } else if(receivedMessage.getMessageType() == MessageType.PING) {
-                    //do nothing
-                } else {
-                    throw new IOException("Unexpected message!");
-                }
+    protected void actorMainLoop()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
+        while (true) {
+            Message message = connection.receive();
+            if(message.getMessageType() == MessageType.ORDER) {
+                Order order = message.getOrder();
+                informAboutNewOrder(order);
+            } else if(message.getMessageType() == MessageType.PING) {
+                //do nothing
+            } else {
+                throw new UnexpectedMessageException(message);
             }
-        } finally {
-            connection.close();
         }
     }
 

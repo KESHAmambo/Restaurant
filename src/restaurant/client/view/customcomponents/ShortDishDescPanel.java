@@ -1,6 +1,6 @@
 package restaurant.client.view.customcomponents;
 
-import restaurant.kitchen.Dish;
+import restaurant.common.Dish;
 
 import javax.swing.*;
 import java.awt.*;

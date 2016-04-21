@@ -27,7 +27,7 @@
               <font name="AR CENA" size="28"/>
               <opaque value="false"/>
               <preferredSize width="250" height="50"/>
-              <text value="       Current order:"/>
+              <text value="  Current Order:"/>
             </properties>
           </component>
         </children>
@@ -56,7 +56,6 @@
                   <font size="16"/>
                   <foreground color="-11185067"/>
                   <margin top="0" left="20" bottom="0" right="20"/>
-                  <text value=""/>
                 </properties>
               </component>
             </children>
@@ -74,7 +73,7 @@
                   <font name="AR CENA" size="26"/>
                   <opaque value="false"/>
                   <preferredSize width="250" height="50"/>
-                  <text value="        Previous orders:"/>
+                  <text value="  Previous Orders:"/>
                 </properties>
               </component>
             </children>

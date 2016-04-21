@@ -1,10 +1,7 @@
 package restaurant.administrator.controller.handlers;
 
 import restaurant.administrator.controller.Server;
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
-import restaurant.kitchen.Connection;
-import restaurant.kitchen.Order;
+import restaurant.common.*;
 
 import java.io.IOException;
 import java.util.Date;
@@ -15,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Аркадий on 13.03.2016.
  */
-public class CookHandler extends Handler {
+class CookHandler extends Handler {
     private BlockingQueue<Order> waitingOrders = Server.getWaitingOrders();
     private BlockingQueue<String> waiters = Server.getWaiters();
     private Map<String, Connection> waitersLinksFromNameToConnection =
@@ -34,7 +31,10 @@ public class CookHandler extends Handler {
             requestActorName();
             Server.updateConnectionsInfo("Cook " + actorName + " was connected.");
             handlerMainLoop();
-        } catch (IOException | InterruptedException | ClassNotFoundException e) {
+        } catch (IOException |
+                InterruptedException |
+                ClassNotFoundException |
+                UnexpectedMessageException e) {
             e.printStackTrace();
         } finally {
             informServerAndCloseConnection("Cook");
@@ -43,7 +43,8 @@ public class CookHandler extends Handler {
 
     @Override
     protected void handlerMainLoop()
-            throws InterruptedException, IOException, ClassNotFoundException {
+            throws InterruptedException, IOException,
+            ClassNotFoundException, UnexpectedMessageException {
         while(true) {
             if(!cookingOrder) {
                 waitForOrder();
@@ -53,17 +54,22 @@ public class CookHandler extends Handler {
         }
     }
 
-    private void waitForCooking() throws IOException, InterruptedException, ClassNotFoundException {
+    private void waitForCooking()
+            throws IOException, InterruptedException,
+            ClassNotFoundException, UnexpectedMessageException {
         Message message = connection.receive();
         if(message.getMessageType() == MessageType.ORDER_IS_READY) {
             Order order = message.getOrder();
             if(order != null) {
                 processReadyOrder(message, order);
             }
+        } else {
+            throw new UnexpectedMessageException(message);
         }
     }
 
-    private void processReadyOrder(Message message, Order order) throws InterruptedException {
+    private void processReadyOrder(Message message, Order order)
+            throws InterruptedException {
         try {
             order.setReadyTime(new Date());
             order.setCookName(actorName);
@@ -79,7 +85,8 @@ public class CookHandler extends Handler {
         }
     }
 
-    private void sendToAnotherWaiter(Message message, Order order) throws InterruptedException {
+    private void sendToAnotherWaiter(Message message, Order order)
+            throws InterruptedException {
         while (true) {
             try {
                 String waiterName = waiters.take();
@@ -96,7 +103,8 @@ public class CookHandler extends Handler {
         }
     }
 
-    private void waitForOrder() throws InterruptedException, IOException {
+    private void waitForOrder()
+            throws InterruptedException, IOException {
         Order order;
         while(true) {
             order = waitingOrders.poll(3, TimeUnit.SECONDS);

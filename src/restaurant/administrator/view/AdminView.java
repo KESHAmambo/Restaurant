@@ -63,7 +63,7 @@ public class AdminView {
         restoreDishPanel = new ChangeDishStatusPanel(
                 "Enter name of dish you want to restore:",
                 "RESTORE DISH" , createListenerForRestoreButton());
-        menuPanel = new MenuPanel(model.getNewMenu(),
+        menuPanel = new MenuPanel(model.getMenu(),
                 createListenerForStartButton(), createListenerForExitButton());
         statisticsPanel = new StatisticsPanel(createListenerForStatisticsButton());
         infographicsPanel = new InfographicsPanel(createListenerForInfographicsButton());
@@ -84,7 +84,7 @@ public class AdminView {
                         processBarInfographQuery(queryType, fromDate, toDate);
                     }
                 } catch (ParseException e1) {
-                    showWarningDialog("Invalid date format!");
+                    showErrorDialog("Invalid date format!");
                 }
             }
 
@@ -93,7 +93,7 @@ public class AdminView {
                 if (!data.isEmpty()) {
                     infographicsPanel.drawPieChart(data);
                 } else {
-                    showWarningDialog("No statistics for specified period.");
+                    showErrorDialog("No statistics for specified period.");
                 }
             }
 
@@ -102,7 +102,7 @@ public class AdminView {
                 if (!data.isEmpty()) {
                     infographicsPanel.drawBarChart(data);
                 } else {
-                    showWarningDialog("No statistics for specified period.");
+                    showErrorDialog("No statistics for specified period.");
                 }
             }
         };
@@ -120,9 +120,9 @@ public class AdminView {
                     String resultText = model.processQuery(queryType, fromDate, toDate);
                     statisticsPanel.updateText(resultText);
                 } catch (NumberFormatException e1) {
-                    showWarningDialog("Invalid days number! Must be between 0 and 30000.");
+                    showErrorDialog("Invalid days number! Must be between 0 and 30000.");
                 } catch (ParseException e1) {
-                    showWarningDialog("Invalid date format!");
+                    showErrorDialog("Invalid date format!");
                 }
             }
         };
@@ -138,7 +138,7 @@ public class AdminView {
             public void actionPerformed(ActionEvent e) {
                 int stop = showConfirmDialog("Do you really want to EXIT?");
                 if(stop == 0) {
-                    controller.stopServer();
+                    controller.closeResourcesAndStopServer();
                 }
             }
         };
@@ -168,7 +168,7 @@ public class AdminView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editMenu(deleteDishPanel.getTextField(), "deleted");
+                editMenu(restoreDishPanel.getSelectedDishType(), deleteDishPanel.getTextField(), "deleted");
             }
         };
     }
@@ -177,22 +177,24 @@ public class AdminView {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editMenu(restoreDishPanel.getTextField(), "restored");
+                editMenu(restoreDishPanel.getSelectedDishType(),
+                        restoreDishPanel.getTextField(), "restored");
             }
         };
     }
 
-    private void editMenu(JTextField textField, String operationName) {
+    private void editMenu(
+            String dishType, JTextField textField, String operationName) {
         String dishName = textField.getText();
         dishName = dishName.trim();
         if(!"".equals(dishName)) {
             boolean statusChanged = false;
             switch(operationName) {
                 case "restored":
-                    statusChanged = model.changeDishStatus(dishName, false);
+                    statusChanged = model.changeDishDeletedStatus(dishType, dishName, false);
                     break;
                 case "deleted":
-                    statusChanged = model.changeDishStatus(dishName, true);
+                    statusChanged = model.changeDishDeletedStatus(dishType, dishName, true);
             }
 
             showStatusChangedResult(dishName, statusChanged, operationName);
@@ -204,14 +206,14 @@ public class AdminView {
     }
 
     public void updateMenuPanel() {
-        menuPanel.updateMenuTextArea(model.getNewMenu());
+        menuPanel.updateMenuTextArea(model.getMenu());
     }
 
     private void showStatusChangedResult(String dishName, boolean statusChanged, String operationName) {
         if (statusChanged) {
             showInformDialog(String.format("Dish \"%s\" was %s!", dishName, operationName.toUpperCase()));
         } else {
-            showWarningDialog("Dish with this name isn't in menu!");
+            showErrorDialog("Dish with this name isn't in menu!");
         }
     }
 
@@ -224,7 +226,6 @@ public class AdminView {
             JTextField imagePathField = null;
             JTextField priceField = null;
             JPanel dishImagePanel = null;
-            JCheckBox imageCheckBox = null;
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -236,7 +237,6 @@ public class AdminView {
                 String fullDesc = fullDescArea.getText().trim();
                 String imagePath = imagePathField.getText().trim();
                 String priceString = priceField.getText().trim();
-                boolean needImage = imageCheckBox.isSelected();
 
                 boolean validTexts = checkValidityOfTexts(name, shortDesc, fullDesc, imagePath);
                 if(!validTexts) return;
@@ -244,9 +244,7 @@ public class AdminView {
                 double price = checkAndGetPrice(priceString);
                 if(price == -1) return;
 
-                boolean added = model.addOrEditDish(
-                        type, name, shortDesc, fullDesc,
-                        imagePath, needImage, price);
+                boolean added = model.addOrEditDish(type, name, shortDesc, fullDesc, imagePath, price);
                 if(added) {
                     showInformDialog(String.format("Dish \"%s\" was successfully added!", name));
                     updateMenuPanel();
@@ -278,9 +276,6 @@ public class AdminView {
                 if(dishImagePanel == null) {
                     dishImagePanel = addDishPanel.getDishImagePanel();
                 }
-                if(imageCheckBox == null) {
-                    imageCheckBox = addDishPanel.getImageCheckBox();
-                }
             }
 
             private double checkAndGetPrice(String priceString) {
@@ -289,7 +284,7 @@ public class AdminView {
                     if(price <= 0) throw new NumberFormatException();
                     return price;
                 } catch (NumberFormatException e) {
-                    showWarningDialog("Invalid price!");
+                    showErrorDialog("Invalid price!");
                     return -1;
                 }
             }
@@ -320,13 +315,13 @@ public class AdminView {
 
             private boolean checkTextsLength(String name, String shortDesc, String fullDesc, String imagePath) {
                 if(name.length() > 34 || name.length() < 3) {
-                    showWarningDialog("Dish name must be between 3 and 34 characters!");
+                    showErrorDialog("Dish name must be between 3 and 34 characters!");
                     return false;
                 } else if(shortDesc.length() > 105) {
-                    showWarningDialog("Dish short description must be up to 105 characters!");
+                    showErrorDialog("Dish short description must be up to 105 characters!");
                     return false;
                 } else if(fullDesc.length() > 370) {
-                    showWarningDialog("Dish full description must be up to 370 characters!");
+                    showErrorDialog("Dish full description must be up to 370 characters!");
                     return false;
                 }
                 return true;
@@ -334,10 +329,10 @@ public class AdminView {
 
             private boolean checkRowsNumber(String shortDesc, String fullDesc) {
                 if(countSeparators(shortDesc) > 1) {
-                    showWarningDialog("Short description must not contain more then 2 rows");
+                    showErrorDialog("Short description must not contain more then 2 rows");
                     return false;
                 } else if(countSeparators(fullDesc) > 9) {
-                    showWarningDialog("Full description must not contain more then 9 rows");
+                    showErrorDialog("Full description must not contain more then 9 rows");
                     return false;
                 }
                 return true;
@@ -369,7 +364,7 @@ public class AdminView {
             try {
                 return Integer.parseInt(port.trim());
             }catch (Exception e) {
-                showWarningDialog("Incorrect port was entered, try again.");
+                showErrorDialog("Incorrect port was entered, try again.");
             }
         }
     }
@@ -382,7 +377,7 @@ public class AdminView {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void showWarningDialog(String text) {
+    public void showErrorDialog(String text) {
         JOptionPane.showMessageDialog(
                 frame,
                 text,

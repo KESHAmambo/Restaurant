@@ -1,4 +1,4 @@
-package restaurant.kitchen;
+package restaurant.common;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -6,10 +6,9 @@ import java.net.Socket;
 /**
  * Created by Аркадий on 14.03.2016.
  */
-public abstract class Actor {
+public abstract class ActorController {
     protected String actorName;
     protected Connection connection;
-    protected volatile boolean actorConnected = false;
 
     protected void run() {
         try {
@@ -17,23 +16,30 @@ public abstract class Actor {
             int serverPort = askServerPort();
             Socket socket = new Socket(serverAddress, serverPort);
             connection = new Connection(socket);
-            actorHandshake();
+            handshakeServer();
             actorMainLoop();
-        } catch (IOException | ClassNotFoundException | IllegalArgumentException e) {
+        } catch (IOException |
+                ClassNotFoundException |
+                IllegalArgumentException |
+                UnexpectedMessageException e) {
             e.printStackTrace();
             notifyConnectionStatusChanged(false);
+        } finally {
+            closeResources();
         }
     }
 
-    protected abstract void actorHandshake() throws  IOException, ClassNotFoundException;
+    protected abstract void handshakeServer()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException;
 
-    protected void shake(MessageType messageType) throws IOException, ClassNotFoundException {
-        Message handshakeMessage = new Message(messageType);
-        connection.send(handshakeMessage);
+    protected void sendConnectionTypeAndActorName(MessageType connectionType)
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
+        Message connectionTypeMessage = new Message(connectionType);
+        connection.send(connectionTypeMessage);
         String name = null;
         while(true) {
-            Message receiveMessage = connection.receive();
-            switch(receiveMessage.getMessageType()) {
+            Message message = connection.receive();
+            switch(message.getMessageType()) {
                 case NAME_REQUEST:
                     name = askName();
                     connection.send(new Message(MessageType.ACTOR_NAME, name));
@@ -43,14 +49,22 @@ public abstract class Actor {
                     notifyConnectionStatusChanged(true);
                     return;
                 default:
-                    throw new IOException("Unexpected MessageType");
+                    throw new UnexpectedMessageException(message);
             }
         }
     }
 
-    protected abstract void actorMainLoop() throws IOException, ClassNotFoundException;
+    private void closeResources() {
+        try {
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public abstract void sendMessage(Message message);
+
+    protected abstract void actorMainLoop() throws IOException, ClassNotFoundException, UnexpectedMessageException;
 
     protected abstract int askServerPort();
 

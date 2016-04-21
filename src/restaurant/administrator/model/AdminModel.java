@@ -1,8 +1,7 @@
 package restaurant.administrator.model;
 
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Menu;
-import restaurant.kitchen.Order;
+import restaurant.common.Menu;
+import restaurant.common.Order;
 
 import java.io.*;
 import java.sql.*;
@@ -16,36 +15,19 @@ public class AdminModel {
     private final String MENU_PATH = "src/restaurant/administrator/menu.txt";
 
     private DatabaseManager dbManager;
-    private Menu oldMenu;
-    private Menu newMenu;
-    private List<Dish> needImageDishes = new ArrayList<>();
-    private List<Dish> notNeedImageDishes = new ArrayList<>();
-    private List<Dish> statusChangedDishes = new ArrayList<>();
+    private Menu menu;
 
     public AdminModel() {
-        oldMenu = initMenu();
+        menu = initMenu();
         try {
-            newMenu = oldMenu.clone();
             dbManager = new DatabaseManager();
-        } catch (CloneNotSupportedException | SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Dish> getNeedImageDishes() {
-        return needImageDishes;
-    }
-
-    public List<Dish> getNotNeedImageDishes() {
-        return notNeedImageDishes;
-    }
-
-    public List<Dish> getStatusChangedDishes() {
-        return statusChangedDishes;
-    }
-
-    public Menu getNewMenu() {
-        return newMenu;
+    public Menu getMenu() {
+        return menu;
     }
 
     private Menu initMenu() {
@@ -60,27 +42,23 @@ public class AdminModel {
         }
     }
 
-    public boolean changeDishStatus(String dishName, boolean deleted) {
-        //TODO
-        return false;
+    public boolean changeDishDeletedStatus(String dishType, String dishName, boolean deleted) {
+        return menu.changeDishDeletedStatus(dishType, dishName, deleted);
     }
 
-    /**
-     * @return true if dish is new and was added to newMenu,
-     * false if dish is already exists and was edited
-     */
     public boolean addOrEditDish(
-            String type, String name, String shortDesc,
-            String fullDesc, String imagePath, boolean needImage, double price) {
-        //TODO
-        return false;
+            String type, String name, String shortDesc, String fullDesc,
+            String serverImagePath, double price) {
+        return menu.addOrEditDish(
+                type, name, shortDesc, fullDesc,
+                serverImagePath, price);
     }
 
     public void serializeMenu() {
         try {
             FileOutputStream fileOS = new FileOutputStream(MENU_PATH);
             ObjectOutputStream objectOS = new ObjectOutputStream(fileOS);
-            objectOS.writeObject(newMenu);
+            objectOS.writeObject(menu);
             objectOS.flush();
             fileOS.close();
         } catch (IOException e) {

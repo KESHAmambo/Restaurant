@@ -1,6 +1,6 @@
 package restaurant.administrator.view.customcomponents;
 
-import restaurant.kitchen.SwingHelper;
+import restaurant.common.SwingHelper;
 import restaurant.client.view.customcomponents.ImagePanel;
 
 import javax.swing.*;
@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static restaurant.kitchen.SwingHelper.*;
+import static restaurant.common.SwingHelper.*;
 
 /**
  * Created by Аркадий on 01.04.2016.
@@ -33,7 +33,6 @@ public class AddDishPanel extends JPanel {
     private JTextArea fullDescArea;
     private JComboBox<String> typesBox;
     private JTextField priceField;
-    private JCheckBox imageCheckBox;
 
     public AddDishPanel(ActionListener addOrEditButtonListener) {
 //        this.adminView = adminView;
@@ -44,10 +43,6 @@ public class AddDishPanel extends JPanel {
 
         add(leftPanel);
         add(rightPanel);
-    }
-
-    public JCheckBox getImageCheckBox() {
-        return imageCheckBox;
     }
 
     public JTextField getImagePathField() {
@@ -136,23 +131,10 @@ public class AddDishPanel extends JPanel {
         imagePathField = createField();
         components.add(imagePathField);
 
-        imageCheckBox = createImageCheckBox();
-        components.add(imageCheckBox);
-
         dishImagePanel = createDishImagePanel();
         components.add(dishImagePanel);
 
         return components;
-    }
-
-    private JCheckBox createImageCheckBox() {
-        JCheckBox resultCheckBox = new JCheckBox("Set image?");
-        setPrefMaxMinSizes(resultCheckBox, new Dimension(200, 40));
-        resultCheckBox.setFont(new Font("Dialog", Font.PLAIN, 20));
-        resultCheckBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        resultCheckBox.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
-        resultCheckBox.setOpaque(false);
-        return resultCheckBox;
     }
 
     private ImagePanel createDishImagePanel() {
@@ -214,7 +196,7 @@ public class AddDishPanel extends JPanel {
         resultBox.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         resultBox.setOpaque(false);
 
-        for(String type: restaurant.kitchen.Menu.getTypes()) {
+        for(String type: restaurant.common.Menu.getTypes()) {
             resultBox.addItem(type);
         }
 

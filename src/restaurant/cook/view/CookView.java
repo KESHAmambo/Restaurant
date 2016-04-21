@@ -1,11 +1,11 @@
 package restaurant.cook.view;
 
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
+import restaurant.common.Message;
+import restaurant.common.MessageType;
 import restaurant.cook.CookController;
 import restaurant.cook.CookModel;
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Order;
+import restaurant.common.Dish;
+import restaurant.common.Order;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

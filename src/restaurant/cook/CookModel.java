@@ -1,6 +1,6 @@
 package restaurant.cook;
 
-import restaurant.kitchen.Order;
+import restaurant.common.Order;
 
 /**
  * Created by Аркадий on 14.03.2016.
@@ -12,7 +12,7 @@ public class CookModel {
         return currentOrder;
     }
 
-    public void setCurrentOrder(Order currentOrder) {
+    void setCurrentOrder(Order currentOrder) {
         this.currentOrder = currentOrder;
     }
 }

@@ -1,4 +1,4 @@
-package restaurant.kitchen;
+package restaurant.common;
 
 /**
  * Created by Аркадий on 13.03.2016.
@@ -16,6 +16,10 @@ public enum MessageType {
     END_MEAL,
     TEXT,
     PING,
+    MENU,
+    IMAGE_REQEUST,
+    IMAGES_COUNT,
+
     DISHES_NUMBER,
     STATUS_CHANGED_DISH,
     DISH_WITHOUT_IMAGE,

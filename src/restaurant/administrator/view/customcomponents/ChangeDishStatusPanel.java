@@ -1,12 +1,12 @@
 package restaurant.administrator.view.customcomponents;
 
-import restaurant.kitchen.SwingHelper;
+import restaurant.common.SwingHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static restaurant.kitchen.SwingHelper.*;
+import static restaurant.common.SwingHelper.*;
 
 /**
  * Created by Аркадий on 01.04.2016.
@@ -50,7 +50,7 @@ public class ChangeDishStatusPanel extends JPanel {
         resultBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         resultBox.setOpaque(false);
 
-        for(String type: restaurant.kitchen.Menu.getTypes()) {
+        for(String type: restaurant.common.Menu.getTypes()) {
             resultBox.addItem(type);
         }
 

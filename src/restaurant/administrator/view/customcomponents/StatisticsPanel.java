@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static restaurant.kitchen.SwingHelper.*;
+import static restaurant.common.SwingHelper.*;
 
 /**
  * Created by Аркадий on 09.04.2016.

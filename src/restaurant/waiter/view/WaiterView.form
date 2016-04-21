@@ -23,7 +23,7 @@
               <font name="AR CENA" size="26"/>
               <opaque value="false"/>
               <preferredSize width="200" height="60"/>
-              <text value="   Clients:"/>
+              <text value="  Clients:"/>
             </properties>
           </component>
           <grid id="3d4db" binding="buttonsPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">

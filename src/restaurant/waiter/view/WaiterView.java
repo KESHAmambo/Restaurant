@@ -1,8 +1,8 @@
 package restaurant.waiter.view;
 
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
-import restaurant.kitchen.Order;
+import restaurant.common.Message;
+import restaurant.common.MessageType;
+import restaurant.common.Order;
 import restaurant.waiter.WaiterController;
 import restaurant.waiter.WaiterModel;
 

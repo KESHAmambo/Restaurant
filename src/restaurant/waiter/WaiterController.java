@@ -1,9 +1,6 @@
 package restaurant.waiter;
 
-import restaurant.kitchen.Actor;
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
-import restaurant.kitchen.Order;
+import restaurant.common.*;
 import restaurant.waiter.view.WaiterView;
 
 import java.io.IOException;
@@ -11,7 +8,7 @@ import java.io.IOException;
 /**
  * Created by Anatoly on 18.03.2016.
  */
-public class WaiterController extends Actor {
+public class WaiterController extends ActorController {
     private WaiterModel model = new WaiterModel();
     private WaiterView view = new WaiterView(this, model);
 
@@ -22,31 +19,32 @@ public class WaiterController extends Actor {
     }
 
     @Override
-    protected void actorHandshake() throws IOException, ClassNotFoundException {
-        shake(MessageType.WAITER_CONNECTION);
+    protected void handshakeServer()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
+        sendConnectionTypeAndActorName(MessageType.WAITER_CONNECTION);
     }
 
     @Override
-    protected void actorMainLoop() throws IOException, ClassNotFoundException {
-        try {
-            while (true) {
-                Message receivedMessage = connection.receive();
-                switch(receivedMessage.getMessageType()) {
-                    case NEW_CLIENT:
-                        informAboutNewClient(receivedMessage.getClientName());
-                        break;
-                    case ORDER_IS_READY:
-                        informAboutReadyOrder(receivedMessage.getOrder());
-                        break;
-                    case TEXT:
-                        informAboutNewText(receivedMessage.getClientName(), receivedMessage.getText());
-                        break;
-                    case END_MEAL:
-                        informAboutEndMeal(receivedMessage.getClientName(), receivedMessage.getBill());
-                }
+    protected void actorMainLoop()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
+        while (true) {
+            Message message = connection.receive();
+            switch(message.getMessageType()) {
+                case NEW_CLIENT:
+                    informAboutNewClient(message.getFirstString());
+                    break;
+                case ORDER_IS_READY:
+                    informAboutReadyOrder(message.getOrder());
+                    break;
+                case TEXT:
+                    informAboutNewText(message.getFirstString(), message.getSecondString());
+                    break;
+                case END_MEAL:
+                    informAboutEndMeal(message.getFirstString(), message.getBill());
+                    break;
+                default:
+                    throw new UnexpectedMessageException(message);
             }
-        } finally {
-            connection.close();
         }
     }
 

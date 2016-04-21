@@ -1,4 +1,4 @@
-package restaurant.kitchen;
+package restaurant.common;
 
 import java.io.Serializable;
 import java.util.*;

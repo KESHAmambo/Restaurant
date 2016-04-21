@@ -1,8 +1,8 @@
 package restaurant.administrator.view.customcomponents;
 
-import restaurant.kitchen.SwingHelper;
-import restaurant.kitchen.Dish;
-import restaurant.kitchen.Menu;
+import restaurant.common.SwingHelper;
+import restaurant.common.Dish;
+import restaurant.common.Menu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.List;
 
-import static restaurant.kitchen.SwingHelper.setPrefMaxMinSizes;
+import static restaurant.common.SwingHelper.setPrefMaxMinSizes;
 
 /**
  * Created by Аркадий on 01.04.2016.

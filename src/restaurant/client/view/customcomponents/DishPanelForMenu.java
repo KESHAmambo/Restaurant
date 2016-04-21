@@ -1,6 +1,6 @@
 package restaurant.client.view.customcomponents;
 
-import restaurant.kitchen.Dish;
+import restaurant.common.Dish;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ public class DishPanelForMenu extends JPanel {
 
     private JPanel createFullDescriptionPanel(Dish dish) {
         JPanel resultPanel = new ImagePanel(
-                new ImageIcon(dish.getImagePath()).getImage(),
+                new ImageIcon(dish.getClientImagePath()).getImage(),
                 WIDTH - 290, 0);
         resultPanel.setName("fullDescriptionPanel");
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.LINE_AXIS));

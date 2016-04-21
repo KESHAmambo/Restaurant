@@ -1,4 +1,4 @@
-package restaurant.kitchen;
+package restaurant.common;
 
 import javax.swing.*;
 import java.awt.*;

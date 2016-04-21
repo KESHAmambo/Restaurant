@@ -1,7 +1,9 @@
 package restaurant.administrator.controller.handlers;
 
-import restaurant.kitchen.Message;
-import restaurant.kitchen.Connection;
+import restaurant.common.Message;
+import restaurant.common.Connection;
+
+import java.io.IOException;
 
 /**
  * Created by Аркадий on 13.03.2016.
@@ -9,7 +11,7 @@ import restaurant.kitchen.Connection;
 public class HandlerFactory {
     private HandlerFactory() {}
 
-    public static Handler byMessage(Message message, Connection connection) {
+    public static Handler byMessage(Message message, Connection connection) throws IOException {
         switch(message.getMessageType()) {
             case COOK_CONNECTION:
                 return new CookHandler(connection);
@@ -18,7 +20,7 @@ public class HandlerFactory {
             case CLIENT_CONNECTION:
                 return new ClientHandler(connection);
             default:
-                return null;
+                throw new IOException("Unexpected connection type: " + message.getMessageType());
         }
     }
 

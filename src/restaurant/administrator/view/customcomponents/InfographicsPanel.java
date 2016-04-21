@@ -18,7 +18,7 @@ import java.sql.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static restaurant.kitchen.SwingHelper.setPrefMaxMinSizes;
+import static restaurant.common.SwingHelper.setPrefMaxMinSizes;
 
 /**
  * Created by Аркадий on 16.04.2016.

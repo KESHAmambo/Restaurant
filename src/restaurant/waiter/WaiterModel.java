@@ -11,13 +11,13 @@ import java.util.List;
 public class WaiterModel {
     private List<Client> clients = new ArrayList<>();
 
-    public Client addNewClient(String clientName) {
+    Client addNewClient(String clientName) {
         Client client = new Client(clientName);
         clients.add(client);
         return client;
     }
 
-    public void deleteClient(String clientName) {
+    void deleteClient(String clientName) {
         Iterator<Client> iterator = clients.iterator();
         while(iterator.hasNext()) {
             if(iterator.next().getName().equals(clientName)) {
@@ -42,7 +42,7 @@ public class WaiterModel {
         private JTextArea messagesArea;
         private JPanel buttonPanel;
 
-        public Client(String name) {
+        Client(String name) {
             this.name = name;
         }
 

@@ -1,9 +1,10 @@
 package restaurant.administrator.controller.handlers;
 
 import restaurant.administrator.controller.Server;
-import restaurant.kitchen.Message;
-import restaurant.kitchen.MessageType;
-import restaurant.kitchen.Connection;
+import restaurant.common.Message;
+import restaurant.common.MessageType;
+import restaurant.common.Connection;
+import restaurant.common.UnexpectedMessageException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,14 +13,14 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by Аркадий on 13.03.2016.
  */
-public class WaiterHandler extends Handler {
-    private Map<String, Connection> waitersLinksFromNameToConnection =
+class WaiterHandler extends Handler {
+    private Map<String, Connection> waitersPairsNameAndConnection =
             Server.getWaitersLinksFromNameToConnection();
-    private Map<String, Connection> clientsLinksFromNameToConnection =
+    private Map<String, Connection> clientsPairsNameAndConnection =
             Server.getClientsLinksFromNameToConnection();
     private BlockingQueue<String> waiters = Server.getWaiters();
 
-    public WaiterHandler(Connection connection) {
+    WaiterHandler(Connection connection) {
         super(connection);
     }
 
@@ -29,27 +30,32 @@ public class WaiterHandler extends Handler {
             requestActorName();
             Server.updateConnectionsInfo("Waiter " + actorName + " was connected.");
             waiters.add(actorName);
-            waitersLinksFromNameToConnection.put(actorName, connection);
+            waitersPairsNameAndConnection.put(actorName, connection);
             handlerMainLoop();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException |
+                ClassNotFoundException |
+                UnexpectedMessageException e) {
             e.printStackTrace();
         } finally {
             waiters.remove(actorName);
-            waitersLinksFromNameToConnection.remove(actorName);
+            waitersPairsNameAndConnection.remove(actorName);
             informServerAndCloseConnection("Waiter");
         }
     }
 
     @Override
-    protected void handlerMainLoop() throws IOException, ClassNotFoundException {
+    protected void handlerMainLoop()
+            throws IOException, ClassNotFoundException, UnexpectedMessageException {
         while(true) {
             Message message = connection.receive();
-            String clientName = message.getClientName();
+            String clientName = message.getFirstString();
             if(message.getMessageType() == MessageType.TEXT && clientName != null) {
-                Connection clientConnection = clientsLinksFromNameToConnection.get(clientName);
+                Connection clientConnection = clientsPairsNameAndConnection.get(clientName);
                 if (clientConnection != null) {
                     clientConnection.send(message);
                 }
+            } else {
+                throw new UnexpectedMessageException(message);
             }
         }
     }

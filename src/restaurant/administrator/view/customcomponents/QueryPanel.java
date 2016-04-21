@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static restaurant.kitchen.SwingHelper.createSimpleButton;
-import static restaurant.kitchen.SwingHelper.setPrefMaxMinSizes;
+import static restaurant.common.SwingHelper.createSimpleButton;
+import static restaurant.common.SwingHelper.setPrefMaxMinSizes;
 
 /**
  * Created by Аркадий on 16.04.2016.
