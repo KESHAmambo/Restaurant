@@ -88,6 +88,8 @@ public class AdminModel {
     }
 
     public void close() {
-        dbManager.close();
+        if(dbManager != null) {
+            dbManager.close();
+        }
     }
 }
