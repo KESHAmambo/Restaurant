@@ -1,4 +1,4 @@
-package restaurant.client;
+package restaurant.client.model;
 
 import restaurant.common.Dish;
 import restaurant.common.Menu;
@@ -10,7 +10,7 @@ import java.io.*;
  * Created by Аркадий on 20.03.2016.
  */
 public class ClientModel {
-    private final String MENU_PATH = "src/restaurant/client/menu.txt";
+    private final String MENU_PATH = "src/restaurant/client/model/menu.txt";
 
     private Menu menu;
     private Order order;
@@ -90,7 +90,7 @@ public class ClientModel {
         setOrder(emptyOrder);
     }
 
-    void serializeMenu() {
+    public void serializeMenu() {
         try {
             FileOutputStream fileOS = new FileOutputStream(MENU_PATH);
             ObjectOutputStream objectOS = new ObjectOutputStream(fileOS);

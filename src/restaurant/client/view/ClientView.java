@@ -2,8 +2,8 @@ package restaurant.client.view;
 
 import restaurant.common.Message;
 import restaurant.common.MessageType;
-import restaurant.client.ClientController;
-import restaurant.client.ClientModel;
+import restaurant.client.controller.ClientController;
+import restaurant.client.model.ClientModel;
 import restaurant.client.view.animation.FullDescAnimation;
 import restaurant.client.view.customcomponents.*;
 import restaurant.client.view.animation.MyOrderAnimation;

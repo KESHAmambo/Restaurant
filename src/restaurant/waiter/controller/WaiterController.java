@@ -1,6 +1,7 @@
-package restaurant.waiter;
+package restaurant.waiter.controller;
 
 import restaurant.common.*;
+import restaurant.waiter.model.WaiterModel;
 import restaurant.waiter.view.WaiterView;
 
 import java.io.IOException;

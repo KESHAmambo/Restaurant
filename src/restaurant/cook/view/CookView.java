@@ -2,8 +2,8 @@ package restaurant.cook.view;
 
 import restaurant.common.Message;
 import restaurant.common.MessageType;
-import restaurant.cook.CookController;
-import restaurant.cook.CookModel;
+import restaurant.cook.controller.CookController;
+import restaurant.cook.model.CookModel;
 import restaurant.common.Dish;
 import restaurant.common.Order;
 

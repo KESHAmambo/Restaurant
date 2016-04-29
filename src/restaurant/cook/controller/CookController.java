@@ -1,6 +1,7 @@
-package restaurant.cook;
+package restaurant.cook.controller;
 
 import restaurant.common.*;
+import restaurant.cook.model.CookModel;
 import restaurant.cook.view.CookView;
 
 import java.io.IOException;

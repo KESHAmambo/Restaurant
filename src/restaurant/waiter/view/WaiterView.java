@@ -3,8 +3,8 @@ package restaurant.waiter.view;
 import restaurant.common.Message;
 import restaurant.common.MessageType;
 import restaurant.common.Order;
-import restaurant.waiter.WaiterController;
-import restaurant.waiter.WaiterModel;
+import restaurant.waiter.controller.WaiterController;
+import restaurant.waiter.model.WaiterModel;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;

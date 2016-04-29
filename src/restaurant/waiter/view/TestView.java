@@ -1,6 +1,6 @@
 package restaurant.waiter.view;
 
-import restaurant.waiter.WaiterModel;
+import restaurant.waiter.model.WaiterModel;
 
 /**
  * Created by Аркадий on 18.03.2016.

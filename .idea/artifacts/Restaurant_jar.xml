@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="Restaurant:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Restaurant_jar</output-path>
+    <root id="root">
+      <element id="archive" name="Restaurant.jar">
+        <element id="module-output" name="Restaurant" />
+        <element id="dir-copy" path="$PROJECT_DIR$/src" />
+      </element>
+      <element id="library" level="project" name="ojdbc7" />
+      <element id="library" level="project" name="jfreechart-1.0.19" />
+      <element id="library" level="project" name="jfreechart-1.0.19-demo" />
+    </root>
+  </artifact>
+</component>

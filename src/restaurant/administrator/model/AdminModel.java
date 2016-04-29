@@ -12,7 +12,7 @@ import java.util.*;
  * Created by Аркадий on 31.03.2016.
  */
 public class AdminModel {
-    private final String MENU_PATH = "src/restaurant/administrator/menu.txt";
+    private final String MENU_PATH = "src/restaurant/administrator/model/menu.txt";
 
     private DatabaseManager dbManager;
     private Menu menu;

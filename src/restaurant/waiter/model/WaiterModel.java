@@ -1,4 +1,4 @@
-package restaurant.waiter;
+package restaurant.waiter.model;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -11,13 +11,13 @@ import java.util.List;
 public class WaiterModel {
     private List<Client> clients = new ArrayList<>();
 
-    Client addNewClient(String clientName) {
+    public Client addNewClient(String clientName) {
         Client client = new Client(clientName);
         clients.add(client);
         return client;
     }
 
-    void deleteClient(String clientName) {
+    public void deleteClient(String clientName) {
         Iterator<Client> iterator = clients.iterator();
         while(iterator.hasNext()) {
             if(iterator.next().getName().equals(clientName)) {

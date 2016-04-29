@@ -1,5 +1,6 @@
-package restaurant.client;
+package restaurant.client.controller;
 
+import restaurant.client.model.ClientModel;
 import restaurant.common.*;
 import restaurant.client.view.ClientView;
 

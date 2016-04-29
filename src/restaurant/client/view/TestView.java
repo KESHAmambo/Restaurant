@@ -1,6 +1,6 @@
 package restaurant.client.view;
 
-import restaurant.client.ClientModel;
+import restaurant.client.model.ClientModel;
 
 /**
  * Created by Аркадий on 20.03.2016.

@@ -1,4 +1,4 @@
-package restaurant.cook;
+package restaurant.cook.model;
 
 import restaurant.common.Order;
 
@@ -12,7 +12,7 @@ public class CookModel {
         return currentOrder;
     }
 
-    void setCurrentOrder(Order currentOrder) {
+    public void setCurrentOrder(Order currentOrder) {
         this.currentOrder = currentOrder;
     }
 }
