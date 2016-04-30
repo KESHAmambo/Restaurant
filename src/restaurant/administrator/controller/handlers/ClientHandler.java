@@ -67,7 +67,8 @@ class ClientHandler extends Handler {
         for(int i = 0; i < imagesCount; i++) {
             Message message = connection.receive();
             if(message.getMessageType() == MessageType.IMAGE_REQEUST) {
-                connection.sendImage(message.getFirstString());
+                String serverImagePath = message.getFirstString();
+                connection.sendImage(serverImagePath);
             } else {
                 throw new UnexpectedMessageException(message);
             }

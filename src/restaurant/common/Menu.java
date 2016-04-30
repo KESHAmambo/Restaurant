@@ -45,15 +45,6 @@ public class Menu implements Serializable, Cloneable {
         return types;
     }
 
-    public Dish getDish(String type, String name) {
-        for(Dish dish: store.get(type)) {
-            if(dish.getName().equals(name)) {
-                return dish;
-            }
-        }
-        return null;
-    }
-
     public void add(Dish dish) {
         store.get(dish.getType()).add(dish);
     }
@@ -73,13 +64,22 @@ public class Menu implements Serializable, Cloneable {
 
     private boolean removeDish(String type, String name) {
         List<Dish> typeDishes = store.get(type);
-        for(Dish dish: typeDishes) {
+        Iterator<Dish> iter = typeDishes.iterator();
+        while(iter.hasNext()) {
+            Dish dish = iter.next();
+            if(dish.getName().equals(name)) {
+                iter.remove();
+                return true;
+            }
+        }
+        return false;
+        /*for(Dish dish: store.get(type)) {
             if(dish.getName().equals(name)) {
                 typeDishes.remove(dish);
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
 
     public Dish removeDish(Dish dish) {
