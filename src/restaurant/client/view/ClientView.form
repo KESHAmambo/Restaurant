@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="restaurant.client.view.ClientView">
+  <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="430" height="382"/>
+    </constraints>
+    <properties>
+      <background color="-16777216"/>
+      <foreground color="-16777216"/>
+      <opaque value="true"/>
+      <preferredSize width="1024" height="650"/>
+    </properties>
+    <border type="empty"/>
+    <children>
+      <grid id="b5749" binding="northPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="North"/>
+        <properties>
+          <background color="-13619152"/>
+          <foreground color="-16777216"/>
+          <opaque value="true"/>
+          <preferredSize width="1024" height="50"/>
+        </properties>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="e6cfe" binding="southPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="South"/>
+        <properties>
+          <preferredSize width="1024" height="50"/>
+        </properties>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="8b4d6" binding="centerPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <background color="-4724572"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="99f5a" binding="typeButtonsPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints border-constraint="West"/>
+            <properties>
+              <background color="-12828348"/>
+              <preferredSize width="257" height="10"/>
+            </properties>
+            <border type="none">
+              <color color="-16777216"/>
+            </border>
+            <children/>
+          </grid>
+          <grid id="9b092" binding="boxPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints border-constraint="Center"/>
+            <properties>
+              <background color="-12828345"/>
+            </properties>
+            <border type="none"/>
+            <children/>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
